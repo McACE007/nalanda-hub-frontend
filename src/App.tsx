@@ -1,12 +1,13 @@
-import { Home } from "lucide-react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import HomePage from "./pages/HomePage"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
+import { Toaster } from "./components/ui/sonner"
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster richColors />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
