@@ -3,13 +3,16 @@ import HomePage from "./pages/HomePage"
 import LoginPage from "./pages/LoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import { Toaster } from "./components/ui/sonner"
+import HomeLayout from "./layouts/home.layout"
 
 function App() {
   return (
     <BrowserRouter>
       <Toaster richColors />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomeLayout />} >
+          <Route index element={<HomePage />} />
+        </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
