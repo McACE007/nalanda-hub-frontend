@@ -14,4 +14,5 @@ export const userRegistrationSchema = z.object({
     .string()
     .min(8, "Confirm password must be at least 8 characters")
     .max(16, "Confirm password must be at most 16 characters"),
+  branchId: z.number(),
 });

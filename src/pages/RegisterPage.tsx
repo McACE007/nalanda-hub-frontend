@@ -18,6 +18,7 @@ function RegisterPage() {
             email: "",
             password: "",
             confirmPassword: "",
+            branchId: 1
         },
         resolver: zodResolver(userRegistrationSchema)
     });
@@ -26,12 +27,14 @@ function RegisterPage() {
 
     const navigate = useNavigate();
 
-    const onSubmit = async ({ fullName, email, password, confirmPassword }: z.infer<typeof userRegistrationSchema>) => {
+    const onSubmit = async ({ fullName, email, password, confirmPassword, branchId }: z.infer<typeof userRegistrationSchema>) => {
         if (password !== confirmPassword) {
-            form.setError("confirmPassword", { message: "Passwords do not match" })
+            form.setError("confirmPassword", { message: "Passwords did not match" })
             return;
         }
-        const userId = await register(fullName, email, password, confirmPassword);
+        const userId = await register(fullName, email, password, confirmPassword, branchId);
+
+        console.log(error)
 
         if (!userId) {
             toast.error(error || "Registration failed!")

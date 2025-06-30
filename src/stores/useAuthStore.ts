@@ -18,7 +18,8 @@ type AuthStore = {
     fullName: string,
     email: string,
     password: string,
-    confirmPassword: string
+    confirmPassword: string,
+    branchId: number
   ) => Promise<string | null>;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
@@ -34,17 +35,24 @@ export const useAuthStore = create<AuthStore>()(
       user: null,
       isLoading: false,
       error: null,
-      register: async (fullName, email, password, confirmPassword) => {
+      register: async (
+        fullName,
+        email,
+        password,
+        confirmPassword,
+        branchId
+      ) => {
+        set({ isLoading: true, error: null });
         try {
-          set({ isLoading: true });
           const response = await axiosInstance.post("/register", {
             fullName,
             email,
             password,
             confirmPassword,
+            branchId,
           });
+          
           set({ isLoading: false });
-          console.log(response, "response");
           return response.data.userId;
         } catch (error) {
           console.error("ERROR: ", error);
@@ -57,15 +65,14 @@ export const useAuthStore = create<AuthStore>()(
         }
       },
       login: async (email, password) => {
+        set({ isLoading: true, error: null });
         try {
-          set({ isLoading: true });
           const response = await axiosInstance.post("/login", {
             email,
             password,
           });
           localStorage.setItem("token", response.data.token);
-          set({ user: response.data.user });
-          set({ isLoading: false });
+          set({ isLoading: false, user: response.data.user });
           return true;
         } catch (error) {
           console.error("ERROR: ", error);
@@ -79,11 +86,10 @@ export const useAuthStore = create<AuthStore>()(
         }
       },
       logout: async () => {
+        set({ isLoading: true, error: null });
         try {
-          set({ isLoading: true });
           localStorage.removeItem("token");
-          set({ user: null });
-          set({ isLoading: false });
+          set({ isLoading: false, user: null });
         } catch (error) {
           console.error("ERROR: ", error);
           set({
