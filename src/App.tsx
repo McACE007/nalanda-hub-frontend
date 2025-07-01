@@ -1,23 +1,23 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
-import HomePage from "./pages/HomePage"
-import LoginPage from "./pages/LoginPage"
-import RegisterPage from "./pages/RegisterPage"
-import { Toaster } from "./components/ui/sonner"
-import HomeLayout from "./layouts/home.layout"
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import { Toaster } from "./components/ui/sonner";
+import HomeLayout from "./layouts/HomeLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <Toaster richColors />
       <Routes>
-        <Route path="/" element={<HomeLayout />} >
+        <Route path="/" element={<HomeLayout />}>
           <Route index element={<HomePage />} />
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

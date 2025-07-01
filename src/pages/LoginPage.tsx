@@ -1,83 +1,105 @@
-import { loginUserSchema } from "@/schemas/userSchema";
+import { loginUserSchema, type LoginUserInput } from "@/schemas/userSchema";
 import { useAuthStore } from "@/stores/useAuthStore";
-import type { UserLoginInput } from "@/types/user.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import authSideImage from "../assets/authSideImage.jpg"
-import logo from "../assets/logo.jpg"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import authSideImage from "../assets/authSideImage.jpg";
+import logo from "../assets/logo.jpg";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 function LoginPage() {
-    const form = useForm<UserLoginInput>({
-        defaultValues: {
-            email: "",
-            password: "",
-        },
-        resolver: zodResolver(loginUserSchema)
-    });
+  const form = useForm<LoginUserInput>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    resolver: zodResolver(loginUserSchema),
+  });
 
-    const { login, error } = useAuthStore();
+  const { login, error } = useAuthStore();
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const onSubmit = async ({ email, password }: UserLoginInput) => {
-        const isLoggedIn = await login(email, password);
+  const onSubmit = async ({ email, password }: LoginUserInput) => {
+    const isLoggedIn = await login(email, password);
 
-        if (!isLoggedIn) {
-            toast.error(error || "Login failed!")
-            return;
-        }
-        navigate("/");
-        toast.success("Logged in successfully!");
+    if (!isLoggedIn) {
+      toast.error(error || "Login failed!");
+      return;
     }
+    navigate("/");
+    toast.success("Logged in successfully!");
+  };
 
-    return (
-        <div className="h-screen flex bg-background">
-            <div className="hidden lg:block md:flex-1/4 transition-all duration-300 h-full bg-[#35C2F8] mb-2">
-                <img src={authSideImage} className="h-full w-full object-cover xl:object-contain"></img>
-            </div>
+  return (
+    <div className="h-screen flex bg-background">
+      <div className="hidden lg:block md:flex-1/4 transition-all duration-300 h-full bg-[#35C2F8] mb-2">
+        <img
+          src={authSideImage}
+          className="h-full w-full object-cover xl:object-contain"
+        ></img>
+      </div>
 
-            <div className="flex-1/2 transition-all duration-300">
-                <div className="flex flex-col justify-center space-y-4 px-14 lg:px-36 xl:px-78 h-full transition-all duration-300">
-                    <img src={logo} width={100} height={100} />
-                    <div className="text-3xl font-semibold">Create an account</div>
-                    <Form {...form}>
-                        <form className="flex flex-col space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
-                            <FormField control={form.control} name="email" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="Enter your email">
-                                        </Input>
-                                    </FormControl>
-                                    <FormMessage></FormMessage>
-                                </FormItem>
-                            )} />
+      <div className="flex-1/2 transition-all duration-300">
+        <div className="flex flex-col justify-center space-y-4 px-14 lg:px-36 xl:px-78 h-full transition-all duration-300">
+          <img src={logo} width={100} height={100} />
+          <div className="text-3xl font-semibold">Create an account</div>
+          <Form {...form}>
+            <form
+              className="flex flex-col space-y-3"
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter your email"></Input>
+                    </FormControl>
+                    <FormMessage></FormMessage>
+                  </FormItem>
+                )}
+              />
 
-                            <FormField control={form.control} name="password" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} type="password" placeholder="Enter your password">
-                                        </Input>
-                                    </FormControl>
-                                    <FormMessage></FormMessage>
-                                </FormItem>
-                            )} />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="Enter your password"
+                      ></Input>
+                    </FormControl>
+                    <FormMessage></FormMessage>
+                  </FormItem>
+                )}
+              />
 
-                            <Button type="submit">
-                                {form.formState.isSubmitting ? "LOGGING IN..." : "LOGIN"}
-                            </Button>
-                        </form>
-                    </Form>
-                </div>
-            </div>
+              <Button type="submit">
+                {form.formState.isSubmitting ? "LOGGING IN..." : "LOGIN"}
+              </Button>
+            </form>
+          </Form>
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
-export default LoginPage
+export default LoginPage;
