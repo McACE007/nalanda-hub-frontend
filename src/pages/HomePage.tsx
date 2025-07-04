@@ -3,7 +3,7 @@ import pdfThumbnail from "../assets/pdf_thumnail.png";
 
 function HomePage() {
   return (
-    <div className="flex flex-wrap justify-center gap-3">
+    <div className="flex flex-wrap justify-center gap-2.5">
       {Array(20)
         .fill(0)
         .map((_, index) => (

@@ -58,7 +58,7 @@ function Sidebar({ isOpen, toggle }: SidebarProps) {
   return (
     <div
       className={cn(
-        "fixed left-0 top-14 z-40 h-[calc(100%-56px)] bg-background transition-all duration-300",
+        "fixed left-0 top-14 z-40 h-[calc(100%-56px)] bg-background/0 transition-all duration-300",
         isOpen ? "w-64" : "w-16",
         "border-r"
       )}
