@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 
 function Navbar() {
   return (
-    <nav className="w-full h-14 fixed top-0 left-0 z-50 bg-background/40 border-b border-border/40 py-2 px-4 backdrop-blur-xl">
+    <nav className="w-full h-14 fixed top-0 left-0 z-50 bg-background border-b border-border/40 py-2 px-4">
       <div className="h-full flex justify-between items-center w-full">
         <div className="h-full">
           <Link

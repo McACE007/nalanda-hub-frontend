@@ -3,8 +3,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import authSideImage from "../assets/authSideImage.jpg";
-import logo from "../assets/logo.jpg";
+import authSideImage from "../assets/authSideImage1.jpg";
 import {
   Form,
   FormControl,
@@ -16,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import Brand from "@/components/icons/Brand";
 
 function LoginPage() {
   const form = useForm<LoginUserInput>({
@@ -46,14 +46,20 @@ function LoginPage() {
       <div className="hidden lg:block md:flex-1/4 transition-all duration-300 h-full bg-[#35C2F8] mb-2">
         <img
           src={authSideImage}
-          className="h-full w-full object-cover xl:object-contain"
+          className="h-full w-full object-cover xl:object-cover"
         ></img>
       </div>
 
       <div className="flex-1/2 transition-all duration-300">
-        <div className="flex flex-col justify-center space-y-4 px-14 lg:px-36 xl:px-78 h-full transition-all duration-300">
-          <img src={logo} width={100} height={100} />
-          <div className="text-3xl font-semibold">Create an account</div>
+        <div className="flex flex-col justify-center space-y-4 px-14 lg:px-36 xl:px-48 max-w-4xl mx-auto h-full transition-all duration-300">
+          <div className="flex items-center">
+            <Brand width="60" height="60" />
+            <span className="font-semibold flex flex-col gap-0 leading-4 w-fit text-[#203143]">
+              <span>Nalanda</span>
+              <span>Hub</span>
+            </span>
+          </div>
+          <div className="text-3xl font-semibold">Login</div>
           <Form {...form}>
             <form
               className="flex flex-col space-y-3"
