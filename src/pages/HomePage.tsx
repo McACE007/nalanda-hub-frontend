@@ -1,20 +1,37 @@
 import ContentCard from "@/components/ContentCard";
-import pdfThumbnail from "../assets/pdf_thumnail.png";
+import { useContentStore } from "@/stores/useContentStore";
+import { useEffect } from "react";
 
 function HomePage() {
+  const contents = useContentStore((state) => state.contents);
+  const searchQuery = useContentStore((state) => state.searchQuery);
+  const isLoading = useContentStore((state) => state.isLoading);
+  const fetchAllContents = useContentStore((state) => state.fetchAllContents);
+  const sortBy = useContentStore((state) => state.sortBy);
+
+  useEffect(() => {
+    fetchAllContents();
+  }, [searchQuery, fetchAllContents, sortBy]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="flex flex-wrap justify-center gap-2.5">
-      {Array(20)
-        .fill(0)
-        .map((_, index) => (
+      {contents.length > 0 ? (
+        contents.map((content) => (
           <ContentCard
-            key={index}
-            title="Intro to Computer Science sdfsdf sdfsd fsdf sdf sdfsdf sdfsdf sdfsdf sdfsd sdfsd"
+            key={content.title}
+            title={content.title}
             uploadedBy="Ankit Nayak"
-            imageUrl={pdfThumbnail}
-            href={`/content/${index}`}
+            imageUrl={content.imageUrl}
+            href={`/content/${content.id}`}
           />
-        ))}
+        ))
+      ) : (
+        <div>No content found</div>
+      )}
     </div>
   );
 }

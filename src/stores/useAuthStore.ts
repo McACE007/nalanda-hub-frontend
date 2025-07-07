@@ -4,7 +4,7 @@ import axios, { isAxiosError } from "axios";
 import { API_ROUTES } from "@/config/api";
 
 type User = {
-  id: Number;
+  id: number;
   fullName: string;
   email: string;
   role: "USER" | "MOD" | "ADMIN";
@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthStore>()(
             confirmPassword,
             branchId,
           });
-          
+
           set({ isLoading: false });
           return response.data.userId;
         } catch (error) {

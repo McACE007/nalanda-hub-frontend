@@ -4,8 +4,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Bell, Search, Upload } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useRef } from "react";
+import { useContentStore } from "@/stores/useContentStore";
 
 function Navbar() {
+  const setSearchQuery = useContentStore((store) => store.setSearchQuery);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   return (
     <nav className="w-full h-14 fixed top-0 left-0 z-50 bg-background border-b border-border/40 py-2 px-4">
       <div className="h-full flex justify-between items-center w-full">
@@ -25,8 +30,16 @@ function Navbar() {
           <Input
             className="bg-background rounded-bl-2xl rounded-tl-2xl h-full flex-1 rounded-r-none focus-visible:border-ring focus-visible:ring-ring/10 focus-visible:ring-1"
             placeholder="Search"
+            ref={inputRef}
+            onKeyDown={(e) => {
+              if (e.key === "Enter")
+                setSearchQuery(inputRef.current?.value || "");
+            }}
           />
-          <Search className="font-extralight bg-gray-100 h-full w-fit px-4 py-2 rounded-r-2xl border border-l-0 hover:bg-gray-200/80" />
+          <Search
+            className="font-extralight bg-gray-100 h-full w-fit px-4 py-2 rounded-r-2xl border border-l-0 hover:bg-gray-200/80"
+            onClick={() => setSearchQuery(inputRef.current?.value || "")}
+          />
         </div>
         <div className="flex items-center gap-4">
           <div className="mr-12">

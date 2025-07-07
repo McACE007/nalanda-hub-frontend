@@ -20,8 +20,8 @@ export const subjects = [
 export const units = ["All", "Unit 1", "Unit 2", "Unit 3"];
 
 export const sortingOptions = [
-  "A to Z",
-  "Z to A",
-  "Newest first",
-  "Oldest first",
+  { label: "A to Z", value: "a-z" },
+  { label: "Z to A", value: "z-a" },
+  { label: "Newest first", value: "newest" },
+  { label: "Oldest first", value: "oldest" },
 ];
