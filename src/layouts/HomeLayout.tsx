@@ -4,13 +4,21 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import { Outlet } from "react-router-dom";
-import { semesters, sortingOptions, subjects, units } from "@/lib/constants";
+import { sortingOptions, subjects, units } from "@/lib/constants";
 import CustomSelect from "@/components/CustomSelect";
 import { useContentStore } from "@/stores/useContentStore";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function HomeLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const searchQuery = useContentStore((state) => state.searchQuery);
+  const { setSeletedSemester, semesters, searchQuery } = useContentStore();
 
   return (
     <div className="h-screen flex flex-row relative">
@@ -32,28 +40,39 @@ function HomeLayout() {
           )}
         >
           <div className="w-48">
-            <CustomSelect
-              label="Semester"
-              items={semesters}
-              placeholder="All"
-            />
+            <div className="space-y-1 w-full">
+              <Label className="font-normal">Semester</Label>
+              <Select onValueChange={(value) => setSeletedSemester(value)}>
+                <SelectTrigger className="bg-gray-50 w-full">
+                  <SelectValue placeholder="All"></SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="null">All</SelectItem>
+                  {semesters.map(({ name, id }) => (
+                    <SelectItem key={id} value={id + ""}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          <div className="w-48">
+          {/* <div className="w-48">
             <CustomSelect label="Subject" items={subjects} placeholder="All" />
           </div>
 
           <div className="w-48">
             <CustomSelect label="Unit" items={units} placeholder="All" />
-          </div>
+          </div> */}
 
-          <div className="w-32 ml-auto">
+          {/* <div className="w-32 ml-auto">
             <CustomSelect
               label="Sort"
               items={sortingOptions}
               placeholder="Sort By"
             />
-          </div>
+          </div> */}
         </div>
         <div className={cn(searchQuery && "mt-[70px]")}>
           <Outlet />

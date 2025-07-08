@@ -24,14 +24,18 @@ type ContentState = {
   isLoading: boolean;
   error: string | null;
   searchQuery: string | null;
-  semster: number;
+  semesters: { name: string; id: number }[];
+  selectedSemster: number | null;
   subject: number;
   unit: number;
   sortBy: string;
+  setSeletedSemester: (value: string) => void;
   setSearchQuery: (search: string) => Promise<void>;
   setSortBy: (sortBy: string) => void;
   fetchContentById: (contentId: number) => Promise<boolean>;
   fetchAllContents: () => Promise<boolean>;
+
+  fetchAllSemesters: () => Promise<void>;
 };
 
 const axiosInstance = axios.create({
@@ -41,11 +45,12 @@ const axiosInstance = axios.create({
 export const useContentStore = create<ContentState>((set, get) => ({
   contents: [],
   content: null,
-  isLoading: false,
+  isLoading: true,
   error: null,
   searchQuery: null,
   sortBy: "newest",
-  semster: 0,
+  semesters: [],
+  selectedSemster: null,
   subject: 0,
   unit: 0,
   fetchContentById: async (contentId) => {
@@ -67,13 +72,13 @@ export const useContentStore = create<ContentState>((set, get) => ({
   },
   fetchAllContents: async () => {
     set({ isLoading: true, error: null });
-    const { sortBy } = get();
-    const { searchQuery } = get();
+    const { searchQuery, sortBy, selectedSemster } = get();
     try {
       const response = await axiosInstance.get(`/`, {
         params: {
           search: searchQuery || undefined,
           sortBy: sortBy || undefined,
+          semester: selectedSemster || undefined,
         },
       });
       set({ isLoading: false, contents: response.data.contents });
@@ -92,7 +97,28 @@ export const useContentStore = create<ContentState>((set, get) => ({
   setSearchQuery: async (search) => {
     set({ searchQuery: search });
   },
+  setSeletedSemester: (value: string) => {
+    set({ selectedSemster: Number(value) || null });
+  },
   setSortBy: (sortBy) => {
     set({ sortBy });
+  },
+  fetchAllSemesters: async () => {
+    set({ error: null });
+    try {
+      const response = await axios.get(API_ROUTES.SEMESTER, {
+        headers: {
+          Authorization: localStorage.getItem("token") || "",
+        },
+      });
+      set({ semesters: response.data.semesters });
+    } catch (error) {
+      console.error(error);
+      set({
+        error: isAxiosError(error)
+          ? error.response?.data.error
+          : "Falied to fetch all semesters",
+      });
+    }
   },
 }));

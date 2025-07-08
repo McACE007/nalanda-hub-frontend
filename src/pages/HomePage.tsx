@@ -3,15 +3,19 @@ import { useContentStore } from "@/stores/useContentStore";
 import { useEffect } from "react";
 
 function HomePage() {
-  const contents = useContentStore((state) => state.contents);
-  const searchQuery = useContentStore((state) => state.searchQuery);
-  const isLoading = useContentStore((state) => state.isLoading);
-  const fetchAllContents = useContentStore((state) => state.fetchAllContents);
-  const sortBy = useContentStore((state) => state.sortBy);
+  const {
+    fetchAllContents,
+    isLoading,
+    contents,
+    fetchAllSemesters,
+    selectedSemster,
+    searchQuery,
+  } = useContentStore();
 
   useEffect(() => {
     fetchAllContents();
-  }, [searchQuery, fetchAllContents, sortBy]);
+    fetchAllSemesters();
+  }, [fetchAllContents, fetchAllSemesters, selectedSemster]);
 
   if (isLoading) {
     return <div>Loading...</div>;
