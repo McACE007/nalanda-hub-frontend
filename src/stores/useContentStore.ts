@@ -25,17 +25,23 @@ type ContentState = {
   error: string | null;
   searchQuery: string | null;
   semesters: { name: string; id: number }[];
+  subjects: { name: string; id: number }[];
+  units: { name: string; id: number }[];
   selectedSemster: number | null;
-  subject: number;
-  unit: number;
+  selectedSubject: number | null;
+  selectedUnit: number | null;
   sortBy: string;
   setSeletedSemester: (value: string) => void;
+  setSeletedSubject: (value: string) => void;
+  setSeletedUnit: (value: string) => void;
   setSearchQuery: (search: string) => Promise<void>;
   setSortBy: (sortBy: string) => void;
   fetchContentById: (contentId: number) => Promise<boolean>;
   fetchAllContents: () => Promise<boolean>;
 
   fetchAllSemesters: () => Promise<void>;
+  fetchAllSubjects: (semesterId: string) => Promise<void>;
+  fetchAllUnits: (subjectId: string) => Promise<void>;
 };
 
 const axiosInstance = axios.create({
@@ -50,9 +56,11 @@ export const useContentStore = create<ContentState>((set, get) => ({
   searchQuery: null,
   sortBy: "newest",
   semesters: [],
+  subjects: [],
+  units: [],
   selectedSemster: null,
-  subject: 0,
-  unit: 0,
+  selectedSubject: null,
+  selectedUnit: null,
   fetchContentById: async (contentId) => {
     set({ isLoading: true, error: null });
     try {
@@ -72,13 +80,21 @@ export const useContentStore = create<ContentState>((set, get) => ({
   },
   fetchAllContents: async () => {
     set({ isLoading: true, error: null });
-    const { searchQuery, sortBy, selectedSemster } = get();
+    const {
+      searchQuery,
+      sortBy,
+      selectedSemster,
+      selectedSubject,
+      selectedUnit,
+    } = get();
     try {
       const response = await axiosInstance.get(`/`, {
         params: {
           search: searchQuery || undefined,
           sortBy: sortBy || undefined,
           semester: selectedSemster || undefined,
+          subject: selectedSubject || undefined,
+          unit: selectedUnit || undefined,
         },
       });
       set({ isLoading: false, contents: response.data.contents });
@@ -118,6 +134,54 @@ export const useContentStore = create<ContentState>((set, get) => ({
         error: isAxiosError(error)
           ? error.response?.data.error
           : "Falied to fetch all semesters",
+      });
+    }
+  },
+  setSeletedSubject: (value: string) => {
+    set({ selectedSubject: Number(value) || null });
+  },
+  setSeletedUnit: (value: string) => {
+    set({ selectedUnit: Number(value) || null });
+  },
+  fetchAllSubjects: async (semesterId) => {
+    set({ error: null });
+    try {
+      const response = await axios.get(API_ROUTES.SUBJECT, {
+        headers: {
+          Authorization: localStorage.getItem("token") || "",
+        },
+        params: {
+          semester: semesterId,
+        },
+      });
+      set({ subjects: response.data.subjects });
+    } catch (error) {
+      console.error(error);
+      set({
+        error: isAxiosError(error)
+          ? error.response?.data.error
+          : "Falied to fetch all subjects",
+      });
+    }
+  },
+  fetchAllUnits: async (subjectId) => {
+    set({ error: null });
+    try {
+      const response = await axios.get(API_ROUTES.UNIT, {
+        headers: {
+          Authorization: localStorage.getItem("token") || "",
+        },
+        params: {
+          subject: subjectId,
+        },
+      });
+      set({ units: response.data.units });
+    } catch (error) {
+      console.error(error);
+      set({
+        error: isAxiosError(error)
+          ? error.response?.data.error
+          : "Falied to fetch all units",
       });
     }
   },

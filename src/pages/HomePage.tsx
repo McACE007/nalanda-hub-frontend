@@ -10,12 +10,42 @@ function HomePage() {
     fetchAllSemesters,
     selectedSemster,
     searchQuery,
+    fetchAllSubjects,
+    fetchAllUnits,
+    selectedSubject,
+    selectedUnit,
+    setSeletedSubject,
+    setSeletedUnit,
+    sortBy,
   } = useContentStore();
 
   useEffect(() => {
-    fetchAllContents();
     fetchAllSemesters();
-  }, [fetchAllContents, fetchAllSemesters, selectedSemster]);
+  }, [fetchAllSemesters]);
+
+  useEffect(() => {
+    fetchAllContents();
+    fetchAllUnits(selectedSubject?.toString() || "");
+    setSeletedUnit("");
+  }, [fetchAllUnits, selectedSubject, fetchAllContents, setSeletedUnit]);
+
+  useEffect(() => {
+    fetchAllContents();
+  }, [fetchAllContents, selectedUnit, sortBy]);
+
+  useEffect(() => {
+    fetchAllContents();
+    fetchAllSubjects(selectedSemster?.toString() || "");
+    setSeletedSubject("");
+    setSeletedUnit("");
+  }, [
+    fetchAllContents,
+    searchQuery,
+    selectedSemster,
+    fetchAllSubjects,
+    setSeletedSubject,
+    setSeletedUnit,
+  ]);
 
   if (isLoading) {
     return <div>Loading...</div>;
