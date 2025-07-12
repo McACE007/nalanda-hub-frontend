@@ -5,10 +5,10 @@ import { Bell, Search, Upload } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useRef } from "react";
-import { useContentStore } from "@/stores/useContentStore";
+import { useFilters } from "@/stores/useFilterStore";
 
 function Navbar() {
-  const setSearchQuery = useContentStore((store) => store.setSearchQuery);
+  const setFilters = useFilters((state) => state.setFilters);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
@@ -33,12 +33,14 @@ function Navbar() {
             ref={inputRef}
             onKeyDown={(e) => {
               if (e.key === "Enter")
-                setSearchQuery(inputRef.current?.value || "");
+                setFilters({ searchQuery: inputRef.current?.value || "" });
             }}
           />
           <Search
             className="font-extralight bg-gray-100 h-full w-fit px-4 py-2 rounded-r-2xl border border-l-0 hover:bg-gray-200/80"
-            onClick={() => setSearchQuery(inputRef.current?.value || "")}
+            onClick={() =>
+              setFilters({ searchQuery: inputRef.current?.value || "" })
+            }
           />
         </div>
         <div className="flex items-center gap-4">

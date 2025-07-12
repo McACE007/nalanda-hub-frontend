@@ -4,7 +4,6 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import { Outlet } from "react-router-dom";
-import { useContentStore } from "@/stores/useContentStore";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -14,22 +13,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { sortingOptions } from "@/lib/constants";
+import { useFilters } from "@/stores/useFilterStore";
+import { useSemesters } from "@/hooks/useSemeters";
+import { useSubjects } from "@/hooks/useSubjects";
+import { useUnits } from "@/hooks/useUnits";
 
 function HomeLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const {
-    setSeletedSemester,
-    semesters,
-    subjects,
-    units,
-    setSeletedSubject,
-    setSeletedUnit,
-    selectedSemster,
-    selectedSubject,
-    selectedUnit,
-    setSortBy,
-    sortBy,
-  } = useContentStore();
+  const { semester, subject, unit, sortBy } = useFilters(
+    (state) => state.filters
+  );
+  const setFilters = useFilters((state) => state.setFilters);
+  const { data: semesters } = useSemesters();
+  const { data: subjects } = useSubjects();
+  const { data: units } = useUnits();
 
   return (
     <div className="h-screen flex flex-row relative">
@@ -53,14 +50,16 @@ function HomeLayout() {
             <div className="space-y-1 w-full">
               <Label className="font-normal">Semester</Label>
               <Select
-                onValueChange={(value) => setSeletedSemester(value)}
-                value={selectedSemster?.toString() || ""}
+                onValueChange={(value) =>
+                  setFilters({ semester: value, subject: "all", unit: "all" })
+                }
+                value={semester}
               >
                 <SelectTrigger className="bg-gray-50 w-full">
                   <SelectValue placeholder="All"></SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="null">All</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   {semesters &&
                     semesters.map(({ name, id }) => (
                       <SelectItem key={id} value={id + ""}>
@@ -76,15 +75,17 @@ function HomeLayout() {
             <div className="space-y-1 w-full">
               <Label className="font-normal">Subject</Label>
               <Select
-                disabled={!selectedSemster}
-                onValueChange={(value) => setSeletedSubject(value)}
-                value={selectedSubject?.toString() || ""}
+                disabled={semester === "all"}
+                onValueChange={(value) =>
+                  setFilters({ subject: value, unit: "all" })
+                }
+                value={subject}
               >
                 <SelectTrigger className="bg-gray-50 w-full">
                   <SelectValue placeholder="All"></SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="null">All</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   {subjects &&
                     subjects.map(({ name, id }) => (
                       <SelectItem key={id} value={id + ""}>
@@ -100,15 +101,15 @@ function HomeLayout() {
             <div className="space-y-1 w-full">
               <Label className="font-normal">Unit</Label>
               <Select
-                disabled={!selectedSubject}
-                onValueChange={(value) => setSeletedUnit(value)}
-                value={selectedUnit?.toString() || ""}
+                disabled={subject === "all"}
+                onValueChange={(value) => setFilters({ unit: value })}
+                value={unit}
               >
                 <SelectTrigger className="bg-gray-50 w-full">
                   <SelectValue placeholder="All"></SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="null">All</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   {units &&
                     units.map(({ name, id }) => (
                       <SelectItem key={id} value={id + ""}>
@@ -124,7 +125,7 @@ function HomeLayout() {
             <div className="space-y-1 w-full">
               <Label className="font-normal">Sort</Label>
               <Select
-                onValueChange={(value) => setSortBy(value)}
+                onValueChange={(value) => setFilters({ sortBy: value })}
                 value={sortBy}
               >
                 <SelectTrigger className="bg-gray-50 w-full">

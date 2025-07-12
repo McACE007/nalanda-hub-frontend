@@ -1,51 +1,19 @@
 import ContentCard from "@/components/ContentCard";
-import { useContentStore } from "@/stores/useContentStore";
+import { useContents } from "@/hooks/useContents";
 import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 
 function HomePage() {
-  const {
-    fetchAllContents,
-    isLoading,
-    contents,
-    fetchAllSemesters,
-    selectedSemster,
-    searchQuery,
-    fetchAllSubjects,
-    fetchAllUnits,
-    selectedSubject,
-    selectedUnit,
-    setSeletedSubject,
-    setSeletedUnit,
-    sortBy,
-  } = useContentStore();
+  const { inView, ref } = useInView();
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useContents();
 
   useEffect(() => {
-    fetchAllSemesters();
-  }, [fetchAllSemesters]);
+    fetchNextPage();
+  }, [inView, fetchNextPage]);
 
-  useEffect(() => {
-    fetchAllContents();
-    fetchAllUnits(selectedSubject?.toString() || "");
-    setSeletedUnit("");
-  }, [fetchAllUnits, selectedSubject, fetchAllContents, setSeletedUnit]);
-
-  useEffect(() => {
-    fetchAllContents();
-  }, [fetchAllContents, selectedUnit, sortBy]);
-
-  useEffect(() => {
-    fetchAllContents();
-    fetchAllSubjects(selectedSemster?.toString() || "");
-    setSeletedSubject("");
-    setSeletedUnit("");
-  }, [
-    fetchAllContents,
-    searchQuery,
-    selectedSemster,
-    fetchAllSubjects,
-    setSeletedSubject,
-    setSeletedUnit,
-  ]);
+  console.log("Reredndersfdsklksdjfsdf");
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -53,8 +21,8 @@ function HomePage() {
 
   return (
     <div className="flex flex-wrap justify-center gap-2.5">
-      {contents.length > 0 ? (
-        contents.map((content) => (
+      {data?.pages.map((page) =>
+        page.data.map((content) => (
           <ContentCard
             key={content.title}
             title={content.title}
@@ -63,9 +31,15 @@ function HomePage() {
             href={`/content/${content.id}`}
           />
         ))
-      ) : (
-        <div>No content found</div>
       )}
+
+      <div ref={ref} className="py-6 text-center text-sm text-gray-500">
+        {isFetchingNextPage
+          ? "Loading more..."
+          : hasNextPage
+          ? "Scroll to load more"
+          : "No more contents"}
+      </div>
     </div>
   );
 }
