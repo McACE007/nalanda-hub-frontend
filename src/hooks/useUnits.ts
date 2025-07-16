@@ -11,7 +11,7 @@ export const useUnits = () => {
   const subject = useFilters((state) => state.filters.subject);
 
   return useQuery({
-    queryKey: ["units"],
+    queryKey: ["units", subject],
     queryFn: async (): Promise<{ name: string; id: number }[]> => {
       const response = await axiosInstance.get("/", {
         headers: {

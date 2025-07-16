@@ -3,14 +3,10 @@ import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
   ChevronRight,
-  FileText,
   GitPullRequestCreateArrow,
   Home,
-  ListOrdered,
   LogOut,
-  Printer,
-  SendToBack,
-  Settings,
+  Menu,
   Upload,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -63,28 +59,20 @@ function Sidebar({ isOpen, toggle }: SidebarProps) {
         "border-r"
       )}
     >
-      <div className="flex h-16 items-center justify-between px-4">
+      <div className="flex h-16 items-center px-4">
+        <Button variant={"ghost"} size={"icon"} onClick={toggle}>
+          <Menu className="w-4 min-w-4" />
+        </Button>
         <h1
           className={cn(
-            "font-semibold transition-all duration-300",
-            !isOpen && "hidden"
+            "font-semibold whitespace-nowrap transition-all duration-300 ml-2 overflow-hidden",
+            isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
           )}
         >
           User Panel
         </h1>
-        <Button
-          variant={"ghost"}
-          size={"icon"}
-          className="ml-auto"
-          onClick={toggle}
-        >
-          {isOpen ? (
-            <ChevronLeft className="size-4" />
-          ) : (
-            <ChevronRight className="size-4" />
-          )}
-        </Button>
       </div>
+      <hr></hr>
       <div className="space-y-1 py-4">
         {menuItems.map((item) => (
           <div
@@ -93,15 +81,14 @@ function Sidebar({ isOpen, toggle }: SidebarProps) {
               item.name == "Logout" ? handleLogout : () => navigate(item.href)
             }
             className={cn(
-              "flex items-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer",
-              !isOpen && "justify-center"
+              "flex items-center px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
             )}
           >
-            <item.icon className="size-4" />
+            <item.icon className="size-4 min-w-4" />
             <span
               className={cn(
-                "ml-3 transition-all duration-300",
-                !isOpen && "hidden"
+                "ml-3 transition-all duration-300 whitespace-nowrap overflow-hidden",
+                isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
               )}
             >
               {item.name}

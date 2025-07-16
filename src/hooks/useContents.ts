@@ -43,7 +43,10 @@ export const useContents = () => {
   return useInfiniteQuery({
     queryKey: ["contents", filters],
     queryFn: async ({ pageParam = 1 }): Promise<ApiResponse> => {
-      const response = await axiosInstance.get("/", {
+      const response = await axiosInstance.get("", {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
         params: {
           ...filters,
           page: pageParam,

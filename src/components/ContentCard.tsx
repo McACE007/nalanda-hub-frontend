@@ -16,7 +16,7 @@ function ContentCard({
   href,
 }: ContentCardProps) {
   return (
-    <div className="w-[182px] h-[270px] rounded-xl overflow-hidden shadow-md bg-white hover:shadow-xl transition-all duration-300 group">
+    <div className="rounded-xl overflow-hidden shadow-md bg-white hover:shadow-xl transition-all duration-300 group">
       <Link to={href} className="block h-full">
         {/* Image */}
         <div className="h-[180px] overflow-hidden">
