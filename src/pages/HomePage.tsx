@@ -17,10 +17,12 @@ function HomePage() {
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useContents();
-  const { semester, subject, unit, sortBy } = useFilters(
-    (state) => state.filters
-  );
+  const semester = useFilters((state) => state.filters.semester);
+  const subject = useFilters((state) => state.filters.subject);
+  const unit = useFilters((state) => state.filters.unit);
+  const sortBy = useFilters((state) => state.filters.sortBy);
   const setFilters = useFilters((state) => state.setFilters);
+
   const { data: semesters } = useSemesters();
   const { data: subjects } = useSubjects();
   const { data: units } = useUnits();
