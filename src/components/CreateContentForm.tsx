@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import {
   Select,
   SelectContent,
@@ -23,15 +23,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { API_ROUTES } from "@/config/api";
 import {
   createContentSchema,
   type CreateContentInput,
 } from "@/schemas/contentSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "./ui/input";
+import { useSemesters } from "@/hooks/useSemeters";
+import { useSubjects } from "@/hooks/useSubjects";
+import { useUnits } from "@/hooks/useUnits";
 
 function CreateContentForm() {
   const form = useForm<CreateContentInput>({
@@ -43,56 +43,19 @@ function CreateContentForm() {
     },
   });
 
-  const { data: semesters } = useQuery({
-    queryKey: ["semesters"],
-    queryFn: async (): Promise<{ name: string; id: number }[]> => {
-      const response = await axios.get(API_ROUTES.SEMESTER, {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      });
-      return response.data.semesters;
-    },
+  const [files, semester, subject] = useWatch({
+    control: form.control,
+    name: ["files", "semester", "subject"],
   });
 
-  const { data: subjects } = useQuery({
-    queryKey: ["subjects", form.watch("semester")],
-    queryFn: async (): Promise<{ name: string; id: number }[]> => {
-      const response = await axios.get(API_ROUTES.SUBJECT, {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-        params: {
-          semester: form.getValues("semester"),
-        },
-      });
-      return response.data.subjects;
-    },
-    enabled: !!form.getValues("semester"),
-  });
-
-  const { data: units } = useQuery({
-    queryKey: ["units", form.watch("subject")],
-    queryFn: async (): Promise<{ name: string; id: number }[]> => {
-      const response = await axios.get(API_ROUTES.UNIT, {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-        params: {
-          subject: form.getValues("subject"),
-        },
-      });
-      return response.data.units;
-    },
-    enabled: !!form.getValues("subject"),
-  });
+  const { data: semesters } = useSemesters();
+  const { data: subjects } = useSubjects(semester);
+  const { data: units } = useUnits(subject);
 
   async function onSubmit({ semester, subject, unit }: CreateContentInput) {
-    await new Promise((resolve, reject) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     console.log(subject, semester, unit);
   }
-
-  const files = form.watch("files");
 
   return (
     <Dialog>
@@ -102,66 +65,83 @@ function CreateContentForm() {
           Upload
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-4/6 w-3/6 overflow-auto">
+      <DialogContent className="w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Upload Content Form</DialogTitle>
         </DialogHeader>
         <div className="mt-4">
           <Form {...form}>
             <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="border border-dashed rounded-lg p-10 flex flex-col justify-center items-center gap-2 mb-6">
-                <div className="text-center">
-                  <Upload className="mx-auto size-8 text-gray-400" />
-                </div>
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center transition hover:border-primary hover:bg-gray-50">
                 <FormField
                   control={form.control}
                   name="files"
                   render={() => (
-                    <FormItem className="flex flex-col items-center">
-                      <FormLabel>Click to browse</FormLabel>
+                    <FormItem>
+                      <FormLabel className="flex flex-col items-center gap-2 cursor-pointer">
+                        <Upload className="w-8 h-8 text-gray-400" />
+                        <span className="text-sm font-medium text-gray-600">
+                          Click to upload or drag & drop
+                        </span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="file"
-                          className="sr-only"
                           accept=".pdf, .docx, .doc"
+                          className="sr-only"
                           onChange={(e) =>
                             form.setValue("files", e.target.files, {
                               shouldValidate: true,
                               shouldDirty: true,
                             })
                           }
-                        ></Input>
+                        />
                       </FormControl>
-                      <FormMessage></FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
-                {(form.getValues("files") as FileList).length > 0 && (
-                  <div className="mt-2">
-                    {Array.from(form.getValues("files") as FileList).map(
-                      (file) => (
-                        <div className="flex flex-col justify-center items-center">
-                          <File />
-                          <span className="text-xs">{file.name}</span>
-                        </div>
-                      )
-                    )}
+
+                {files && (files as FileList).length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-3 justify-center">
+                    {Array.from(files as FileList).map((file, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md shadow-sm"
+                      >
+                        <File className="w-4 h-4 text-gray-600" />
+                        <span className="text-sm truncate max-w-[150px]">
+                          {file.name}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
 
               <FormField
                 name="semester"
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Semester</FormLabel>
                     <FormControl>
                       <Select
+                        {...field}
                         value={field.value}
                         onValueChange={(value) => {
-                          form.setValue("semester", value);
-                          form.setValue("subject", "");
-                          form.setValue("unit", "");
+                          form.setValue("semester", value, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          form.setValue("subject", "", {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          form.setValue("unit", "", {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
                         }}
                       >
                         <SelectTrigger className="bg-gray-50 w-full">
@@ -184,16 +164,24 @@ function CreateContentForm() {
 
               <FormField
                 name="subject"
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Subject</FormLabel>
                     <FormControl>
                       <Select
-                        disabled={!form.getValues("semester")}
+                        {...field}
+                        disabled={!semester}
                         value={field.value}
                         onValueChange={(value) => {
-                          form.setValue("subject", value);
-                          form.setValue("unit", "");
+                          form.setValue("subject", value, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          form.setValue("unit", "", {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
                         }}
                       >
                         <SelectTrigger className="bg-gray-50 w-full">
@@ -215,15 +203,22 @@ function CreateContentForm() {
               />
 
               <FormField
+                control={form.control}
                 name="unit"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Unit</FormLabel>
                     <FormControl>
                       <Select
-                        disabled={!form.getValues("subject")}
+                        {...field}
+                        disabled={!subject}
                         value={field.value}
-                        onValueChange={(value) => form.setValue("unit", value)}
+                        onValueChange={(value) => {
+                          form.setValue("unit", value, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                        }}
                       >
                         <SelectTrigger className="bg-gray-50 w-full">
                           <SelectValue placeholder="Select a unit"></SelectValue>

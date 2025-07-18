@@ -24,8 +24,8 @@ function HomePage() {
   const setFilters = useFilters((state) => state.setFilters);
 
   const { data: semesters } = useSemesters();
-  const { data: subjects } = useSubjects();
-  const { data: units } = useUnits();
+  const { data: subjects } = useSubjects(semester);
+  const { data: units } = useUnits(subject);
 
   useEffect(() => {
     if (inView) fetchNextPage();
