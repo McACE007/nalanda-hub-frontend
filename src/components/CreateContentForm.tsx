@@ -32,8 +32,13 @@ import { Input } from "./ui/input";
 import { useSemesters } from "@/hooks/useSemeters";
 import { useSubjects } from "@/hooks/useSubjects";
 import { useUnits } from "@/hooks/useUnits";
+import { useContentStore } from "@/stores/useContentStore";
+import { toast } from "sonner";
+import { useState } from "react";
+import { useCreateContent } from "@/hooks/useMyContents";
 
 function CreateContentForm() {
+  const [open, setOpen] = useState(false);
   const form = useForm<CreateContentInput>({
     resolver: zodResolver(createContentSchema),
     defaultValues: {
@@ -42,6 +47,8 @@ function CreateContentForm() {
       unit: "",
     },
   });
+  const { isLoading, error } = useContentStore();
+  const createContent = useCreateContent();
 
   const [files, semester, subject] = useWatch({
     control: form.control,
@@ -52,15 +59,35 @@ function CreateContentForm() {
   const { data: subjects } = useSubjects(semester);
   const { data: units } = useUnits(subject);
 
-  async function onSubmit({ semester, subject, unit }: CreateContentInput) {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log(subject, semester, unit);
+  async function onSubmit({
+    semester,
+    subject,
+    unit,
+    files,
+  }: CreateContentInput) {
+    const formData = new FormData();
+    formData.set("branchId", "1");
+    formData.set("semesterId", semester);
+    formData.set("subjectId", subject);
+    formData.set("unitId", unit);
+    Array.from(files as FileList).map((file) => formData.append("files", file));
+
+    createContent.mutate(formData, {
+      onSuccess: () => {
+        toast.success("Content created successfully!");
+        form.reset({ semester: "", subject: "", unit: "", files: [] });
+        setOpen(false);
+      },
+      onError: () => {
+        toast.error(error);
+      },
+    });
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button onClick={() => setOpen((t) => !t)}>
           <Upload />
           Upload
         </Button>
@@ -238,10 +265,8 @@ function CreateContentForm() {
                 )}
               />
 
-              <Button disabled={form.formState.isSubmitting} className="w-full">
-                {form.formState.isSubmitting
-                  ? "CREATING A CONTENT..."
-                  : "CREATE A CONTENT"}
+              <Button disabled={isLoading} className="w-full">
+                {isLoading ? "CREATING A CONTENT..." : "CREATE A CONTENT"}
               </Button>
             </form>
           </Form>
