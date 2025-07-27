@@ -12,8 +12,20 @@ import { useDeleteContent, useMyContents } from "@/hooks/useMyContents";
 import { CircuitBoard, Pencil, Trash } from "lucide-react";
 import { format } from "date-fns";
 import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useSearchParams } from "react-router-dom";
 
 function MyUploadsPage() {
   const {
@@ -25,10 +37,27 @@ function MyUploadsPage() {
   } = useMyContents();
   const { ref, inView } = useInView();
   const deleteContent = useDeleteContent();
+  const [searchQuery, setSearchQuery] = useSearchParams();
+  const [open, setOpen] = useState(searchQuery.get("open"));
+
+  useEffect(() => {
+    if (!open) setSearchQuery({ open: "true" });
+  }, []);
 
   useEffect(() => {
     if (inView) fetchNextPage();
   }, [inView, fetchNextPage]);
+
+  const handleDeleteContent = async (contentId: number) => {
+    deleteContent.mutate(contentId, {
+      onSuccess: () => {
+        toast.success("Content deleted successfully!");
+      },
+      onError: () => {
+        toast.error("Failed to delete content");
+      },
+    });
+  };
 
   if (isPending) return <div>Loading....</div>;
 
@@ -38,7 +67,7 @@ function MyUploadsPage() {
     <div className="p-6">
       <div className="flex justify-between">
         <h1 className="text-lg font-bold">My Uploads</h1>
-        <CreateContentForm />
+        <CreateContentForm open={open} setOpen={setOpen} />
       </div>
       <div className="mt-8 bg-card border rounded-lg">
         <div className="overflow-x-auto">
@@ -88,21 +117,33 @@ function MyUploadsPage() {
                           <Pencil className="w-4 h-4" />
                         </Button>
 
-                        <Button
-                          size={"icon"}
-                          onClick={() =>
-                            deleteContent.mutate(content.id, {
-                              onSuccess: () => {
-                                toast.success("Content deleted successfully!");
-                              },
-                              onError: () => {
-                                toast.error("Failed to delete content");
-                              },
-                            })
-                          }
-                        >
-                          <Trash className="w-4 h-4" />
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger>
+                            <Button size={"icon"}>
+                              <Trash className="w-4 h-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete your content.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteContent(content.id)}
+                                className="bg-red-700 hover:bg-red-600"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </TableCell>
                   </TableRow>

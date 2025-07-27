@@ -34,11 +34,16 @@ import { useSubjects } from "@/hooks/useSubjects";
 import { useUnits } from "@/hooks/useUnits";
 import { useContentStore } from "@/stores/useContentStore";
 import { toast } from "sonner";
-import { useState } from "react";
 import { useCreateContent } from "@/hooks/useMyContents";
+import type { Dispatch, SetStateAction } from "react";
 
-function CreateContentForm() {
-  const [open, setOpen] = useState(false);
+function CreateContentForm({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) {
   const form = useForm<CreateContentInput>({
     resolver: zodResolver(createContentSchema),
     defaultValues: {

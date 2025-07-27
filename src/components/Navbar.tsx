@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Brand from "./icons/Brand";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Bell, Search, Upload } from "lucide-react";
@@ -6,10 +6,13 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useRef } from "react";
 import { useFilters } from "@/stores/useFilterStore";
+import { cn } from "@/lib/utils";
 
 function Navbar() {
   const setFilters = useFilters((state) => state.setFilters);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useSearchParams();
 
   return (
     <nav className="w-full h-14 fixed top-0 left-0 z-50 bg-background border-b border-border/40 py-2 px-4">
@@ -44,8 +47,12 @@ function Navbar() {
           />
         </div>
         <div className="flex items-center gap-4">
-          <div className="mr-12">
-            <Button variant={"outline"} className="rounded-2xl">
+          <div className={cn("mr-12", searchQuery.get("open") && "hidden")}>
+            <Button
+              variant={"outline"}
+              className="rounded-2xl"
+              onClick={() => navigate("/my-uploads?open=true")}
+            >
               <Upload />
               Upload
             </Button>
