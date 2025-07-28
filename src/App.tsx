@@ -6,6 +6,7 @@ import { Toaster } from "./components/ui/sonner";
 import HomeLayout from "./layouts/HomeLayout";
 import MyUploadsPage from "./pages/MyUploadsPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import MyRequestsPage from "./pages/MyRequestsPage";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/" element={<HomeLayout />}>
             <Route index element={<HomePage />} />
             <Route path="/my-uploads" element={<MyUploadsPage />} />
+            <Route path="/my-requests" element={<MyRequestsPage />} />
           </Route>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

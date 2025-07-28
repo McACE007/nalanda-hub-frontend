@@ -38,7 +38,7 @@ function MyUploadsPage() {
   const { ref, inView } = useInView();
   const deleteContent = useDeleteContent();
   const [searchQuery, setSearchQuery] = useSearchParams();
-  const [open, setOpen] = useState(searchQuery.get("open"));
+  const [open, setOpen] = useState(Boolean(searchQuery.get("open")) || false);
 
   useEffect(() => {
     if (!open) setSearchQuery({ open: "true" });
