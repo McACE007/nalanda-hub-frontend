@@ -23,19 +23,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import {
-  createContentSchema,
-  type CreateContentInput,
-} from "@/schemas/contentSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "./ui/input";
 import { useSemesters } from "@/hooks/useSemeters";
 import { useSubjects } from "@/hooks/useSubjects";
 import { useUnits } from "@/hooks/useUnits";
-import { useContentStore } from "@/stores/useContentStore";
 import { toast } from "sonner";
-import { useCreateContent } from "@/hooks/useMyContents";
 import type { Dispatch, SetStateAction } from "react";
+import {
+  createRequestSchema,
+  type CreateRequestInput,
+} from "@/schemas/requestSchema";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useCreateRequest, useMyRequests } from "@/hooks/useMyRequests";
 
 function CreateRequestForm({
   open,
@@ -44,47 +43,49 @@ function CreateRequestForm({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-  const form = useForm<CreateContentInput>({
-    resolver: zodResolver(createContentSchema),
+  const form = useForm<CreateRequestInput>({
+    resolver: zodResolver(createRequestSchema),
     defaultValues: {
+      requestType: "",
       semester: "",
       subject: "",
       unit: "",
     },
   });
-  const { isLoading, error } = useContentStore();
-  const createContent = useCreateContent();
+  const { user } = useAuthStore();
+  const createRequest = useCreateRequest();
 
-  const [files, semester, subject] = useWatch({
+  const [semester, subject] = useWatch({
     control: form.control,
-    name: ["files", "semester", "subject"],
+    name: ["semester", "subject"],
   });
 
   const { data: semesters } = useSemesters();
   const { data: subjects } = useSubjects(semester);
   const { data: units } = useUnits(subject);
+  const { isPending: isLoading } = useMyRequests();
 
   async function onSubmit({
+    requestType,
     semester,
     subject,
     unit,
-    files,
-  }: CreateContentInput) {
+  }: CreateRequestInput) {
     const formData = new FormData();
-    formData.set("branchId", "1");
+    formData.set("requestType", requestType);
+    formData.set("branchId", user?.branchId?.toString() || "");
     formData.set("semesterId", semester);
     formData.set("subjectId", subject);
     formData.set("unitId", unit);
-    Array.from(files as FileList).map((file) => formData.append("files", file));
 
-    createContent.mutate(formData, {
+    createRequest.mutate(formData, {
       onSuccess: () => {
-        toast.success("Content created successfully!");
-        form.reset({ semester: "", subject: "", unit: "", files: [] });
+        toast.success("Request created successfully!");
+        form.reset({ semester: "", subject: "", unit: "", requestType: "" });
         setOpen(false);
       },
-      onError: () => {
-        toast.error(error);
+      onError: (error) => {
+        toast.error(error.message);
       },
     });
   }
@@ -99,57 +100,45 @@ function CreateRequestForm({
       </DialogTrigger>
       <DialogContent className="w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Upload Content Form</DialogTitle>
+          <DialogTitle>Create Request Form</DialogTitle>
         </DialogHeader>
         <div className="mt-4">
           <Form {...form}>
             <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center transition hover:border-primary hover:bg-gray-50">
-                <FormField
-                  control={form.control}
-                  name="files"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel className="flex flex-col items-center gap-2 cursor-pointer">
-                        <Upload className="w-8 h-8 text-gray-400" />
-                        <span className="text-sm font-medium text-gray-600">
-                          Click to upload or drag & drop
-                        </span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept=".pdf, .docx, .doc"
-                          className="sr-only"
-                          onChange={(e) =>
-                            form.setValue("files", e.target.files, {
-                              shouldValidate: true,
-                              shouldDirty: true,
-                            })
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {files && (files as FileList).length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-3 justify-center">
-                    {Array.from(files as FileList).map((file, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md shadow-sm"
+              <FormField
+                control={form.control}
+                name="requestType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Request Type</FormLabel>
+                    <FormControl>
+                      <Select
+                        {...field}
+                        value={field.value}
+                        onValueChange={(value) => {
+                          form.setValue("requestType", value, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                        }}
                       >
-                        <File className="w-4 h-4 text-gray-600" />
-                        <span className="text-sm truncate max-w-[150px]">
-                          {file.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                        <SelectTrigger className="bg-gray-50 w-full">
+                          <SelectValue placeholder="Select a request type"></SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={"NewContent"}>
+                            New Content
+                          </SelectItem>
+                          <SelectItem value={"UpdateContent"}>
+                            Update Content
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage></FormMessage>
+                  </FormItem>
                 )}
-              </div>
+              />
 
               <FormField
                 name="semester"
@@ -271,7 +260,7 @@ function CreateRequestForm({
               />
 
               <Button disabled={isLoading} className="w-full">
-                {isLoading ? "CREATING A CONTENT..." : "CREATE A CONTENT"}
+                {isLoading ? "CREATING REQUEST..." : "CREATE REQUEST"}
               </Button>
             </form>
           </Form>

@@ -57,26 +57,21 @@ export const useMyRequests = () => {
       lastPage.meta.hasMore ? lastPage.meta.nextPage : undefined,
   });
 };
-export const useCreateContent = () => {
+
+export const useCreateRequest = () => {
   const queryClient = useQueryClient();
-  const { createContent } = useContentStore();
 
   return useMutation({
-    mutationFn: createContent,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["myContents"] });
+    mutationFn: async (formData: FormData) => {
+      await axios.post(`${API_BASE_URL}/user/requests`, formData, {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+          "Content-Type": "multipart/form-data",
+        },
+      });
     },
-  });
-};
-
-export const useDeleteContent = () => {
-  const queryClient = useQueryClient();
-  const { deleteContent } = useContentStore();
-
-  return useMutation({
-    mutationFn: deleteContent,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["myContents"] });
+      queryClient.invalidateQueries({ queryKey: ["myRequests"] });
     },
   });
 };

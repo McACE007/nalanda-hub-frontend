@@ -8,6 +8,7 @@ type User = {
   fullName: string;
   email: string;
   role: "USER" | "MOD" | "ADMIN";
+  branchId: number;
 };
 
 type AuthStore = {

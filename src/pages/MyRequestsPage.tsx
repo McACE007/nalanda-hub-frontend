@@ -70,11 +70,10 @@ function MyRequestsPage() {
             <TableHeader>
               <TableRow className="font-bold ">
                 <TableHead>S.No</TableHead>
-                <TableHead>Title</TableHead>
+                <TableHead>Request Title</TableHead>
                 <TableHead>Request Type</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Rejection Reason</TableHead>
-                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -91,35 +90,6 @@ function MyRequestsPage() {
                     </TableCell>
                     <TableCell>
                       {request.rejectionReason ? request.rejectionReason : "NA"}
-                    </TableCell>
-                    <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          <Button size={"sm"}>
-                            <Trash className="w-4 h-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete your content.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteContent(request.id)}
-                              className="bg-red-700 hover:bg-red-600"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                 ))
