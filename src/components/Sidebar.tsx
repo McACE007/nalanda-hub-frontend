@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  ChevronLeft,
-  ChevronRight,
   GitPullRequestCreateArrow,
   Home,
   LogOut,
@@ -41,8 +39,17 @@ const menuItems = [
   },
 ];
 
+const modMenuItems = [
+  {
+    name: "Assigned Requests",
+    icon: GitPullRequestCreateArrow,
+    href: "/assigned-requests",
+  },
+];
+
 function Sidebar({ isOpen, toggle }: SidebarProps) {
   const logout = useAuthStore.getState().logout;
+  const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -96,6 +103,47 @@ function Sidebar({ isOpen, toggle }: SidebarProps) {
           </div>
         ))}
       </div>
+      {user?.role === "MOD" && (
+        <>
+          <div className="flex h-16 items-center px-4">
+            <h2
+              className={cn(
+                "font-semibold whitespace-nowrap transition-all duration-300 overflow-hidden",
+                isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+              )}
+            >
+              Moderator Panel
+            </h2>
+          </div>
+          <hr></hr>
+
+          <div className="py-4">
+            {modMenuItems.map((item) => (
+              <div
+                key={item.name}
+                onClick={
+                  item.name == "Logout"
+                    ? handleLogout
+                    : () => navigate(item.href)
+                }
+                className={cn(
+                  "flex items-center px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                )}
+              >
+                <item.icon className="size-4 min-w-4" />
+                <span
+                  className={cn(
+                    "ml-3 transition-all duration-300 whitespace-nowrap overflow-hidden",
+                    isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
+                  )}
+                >
+                  {item.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

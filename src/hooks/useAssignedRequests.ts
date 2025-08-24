@@ -36,19 +36,22 @@ type ApiResponse = {
   };
 };
 
-export const useMyRequests = () => {
+export const useAssignedRequests = () => {
   return useInfiniteQuery({
-    queryKey: ["myRequests"],
+    queryKey: ["assignedRequests"],
     queryFn: async ({ pageParam = 1 }): Promise<ApiResponse> => {
-      const response = await axios.get(`${API_BASE_URL}/user/requests`, {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-        params: {
-          page: pageParam,
-          perPage: 6,
-        },
-      });
+      const response = await axios.get(
+        `${API_BASE_URL}/moderator/requests/assigned-requests`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+          params: {
+            page: pageParam,
+            perPage: 6,
+          },
+        }
+      );
       return response.data;
     },
     initialPageParam: 1,
@@ -57,37 +60,28 @@ export const useMyRequests = () => {
   });
 };
 
-export const useCreateRequest = () => {
+export const useAssignAction = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (formData: FormData) => {
-      await axios.post(`${API_BASE_URL}/user/requests`, formData, {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-          "Content-Type": "multipart/form-data",
-        },
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["myRequests"] });
-    },
-  });
-};
-
-export const useDeleteRequest = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (requestId: number) => {
-      await axios.delete(`${API_BASE_URL}/user/requests/${requestId}`, {
+    mutationFn: async ({
+      id,
+      action,
+      rejectionReason,
+    }: {
+      id: number;
+      action: "approve" | "reject";
+      rejectionReason?: string;
+    }) => {
+      const url = `${API_BASE_URL}/moderator/requests/assigned-requests/${id}/${action}`;
+      await axios.post(url, action === "reject" ? { rejectionReason } : {}, {
         headers: {
           Authorization: localStorage.getItem("token"),
         },
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["myRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["assignedRequests"] });
     },
   });
 };

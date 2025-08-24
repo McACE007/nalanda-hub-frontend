@@ -7,6 +7,7 @@ import HomeLayout from "./layouts/HomeLayout";
 import MyUploadsPage from "./pages/MyUploadsPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MyRequestsPage from "./pages/MyRequestsPage";
+import AssignedRequestPage from "./pages/AssignedRequestsPage";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,10 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path="/my-uploads" element={<MyUploadsPage />} />
             <Route path="/my-requests" element={<MyRequestsPage />} />
+            <Route
+              path="/assigned-requests"
+              element={<AssignedRequestPage />}
+            />
           </Route>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

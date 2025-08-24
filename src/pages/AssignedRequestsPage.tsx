@@ -7,36 +7,45 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useInView } from "react-intersection-observer";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
-import CreateRequestForm from "@/components/CreateRequestForm";
-import { useDeleteRequest, useMyRequests } from "@/hooks/useMyRequests";
+import {
+  useAssignedRequests,
+  useAssignAction,
+} from "@/hooks/useAssignedRequests";
 
-function MyRequestsPage() {
+function AssignedRequestPage() {
   const {
-    data: myRequests,
+    data: assignedRequests,
     isPending,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = useMyRequests();
+  } = useAssignedRequests();
+
   const { ref, inView } = useInView();
-  const deleteRequest = useDeleteRequest();
-  const [open, setOpen] = useState(false);
+  const assignAction = useAssignAction();
 
   useEffect(() => {
     if (inView) fetchNextPage();
   }, [inView, fetchNextPage]);
 
-  const handleDeleteRequest = async (requestId: number) => {
-    deleteRequest.mutate(requestId, {
-      onSuccess: () => {
-        toast.success("Request deleted successfully!");
-      },
-      onError: () => {
-        toast.error("Failed to delete request");
-      },
-    });
+  const handleAction = async (
+    requestId: number,
+    action: "approve" | "reject",
+    rejectionReason = ""
+  ) => {
+    assignAction.mutate(
+      { id: requestId, action, rejectionReason },
+      {
+        onSuccess: () => {
+          toast.success(`Request ${action}ed successfully!`);
+        },
+        onError: () => {
+          toast.error(`Failed to ${action} request`);
+        },
+      }
+    );
   };
 
   if (isPending) return <div>Loading....</div>;
@@ -45,10 +54,7 @@ function MyRequestsPage() {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between">
-        <h1 className="text-lg font-bold">My Request</h1>
-        <CreateRequestForm open={open} setOpen={setOpen} />
-      </div>
+      <h1 className="text-lg font-bold">Assigned Requests</h1>
       <div className="mt-8 bg-card border rounded-lg">
         <div className="overflow-x-auto">
           <Table className="text-nowrap">
@@ -58,11 +64,11 @@ function MyRequestsPage() {
                 <TableHead>Request Title</TableHead>
                 <TableHead>Request Type</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Rejection Reason</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {myRequests?.pages.map((page) =>
+              {assignedRequests?.pages.map((page) =>
                 page.data.map((request) => (
                   <TableRow key={request.id}>
                     <TableCell>{sno++}</TableCell>
@@ -74,7 +80,28 @@ function MyRequestsPage() {
                       <p>{request.status}</p>
                     </TableCell>
                     <TableCell>
-                      {request.rejectionReason ? request.rejectionReason : "NA"}
+                      <>
+                        <button
+                          className="mr-2 px-2 py-1 bg-green-500 text-white rounded"
+                          onClick={() => handleAction(request.id, "approve")}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="px-2 py-1 bg-red-500 text-white rounded"
+                          onClick={() => {
+                            const reason = prompt(
+                              "Enter rejection reason:",
+                              ""
+                            );
+                            if (reason !== null) {
+                              handleAction(request.id, "reject", reason);
+                            }
+                          }}
+                        >
+                          Reject
+                        </button>
+                      </>
                     </TableCell>
                   </TableRow>
                 ))
@@ -94,4 +121,4 @@ function MyRequestsPage() {
   );
 }
 
-export default MyRequestsPage;
+export default AssignedRequestPage;
