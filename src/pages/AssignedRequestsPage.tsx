@@ -35,16 +35,16 @@ interface RequestDetails {
   rejectionReason?: string;
   newContentUrl?: string;
   requestType: string;
-  status: string;
+  status: "Approved" | "Rejected" | "Pending";
   User: {
     id: number;
-    name: string;
+    fullName: string;
     email: string;
   };
   requesterId: number;
   Moderator: {
     id: number;
-    name: string;
+    fullName: string;
     email: string;
   };
   moderatorId: number;
@@ -60,7 +60,7 @@ interface RequestDetails {
     uploadedBy: number;
     uploader: {
       id: number;
-      name: string;
+      fullName: string;
       email: string;
     };
     File?: {
@@ -252,7 +252,7 @@ function AssignedRequestPage() {
                       {request.status}
                     </span>
                   </TableCell>
-                  <TableCell>{request.User?.name || "Unknown"}</TableCell>
+                  <TableCell>{request.User?.fullName || "Unknown"}</TableCell>
                   <TableCell>{request.Subject?.name || "N/A"}</TableCell>
                 </TableRow>
               ))
@@ -358,7 +358,7 @@ function AssignedRequestPage() {
           </DialogHeader>
 
           {selectedRequest && (
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-y-auto">
               <div className="flex h-full gap-6">
                 {/* Left Panel - Request Information */}
                 <div
@@ -430,7 +430,7 @@ function AssignedRequestPage() {
                           Requester
                         </Label>
                         <p className="mt-1 text-sm text-gray-900">
-                          {selectedRequest.User?.name || "Unknown"}
+                          {selectedRequest.User?.fullName || "Unknown"}
                         </p>
                         <p className="text-xs text-gray-500">
                           {selectedRequest.User?.email}
@@ -525,7 +525,7 @@ function AssignedRequestPage() {
                                 Uploaded By
                               </Label>
                               <p className="mt-1 text-sm text-gray-900">
-                                {selectedRequest.Content.uploader?.name}
+                                {selectedRequest.Content.uploader?.fullName}
                               </p>
                             </div>
                             <div>
@@ -570,7 +570,7 @@ function AssignedRequestPage() {
                                     rel="noopener noreferrer"
                                     className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                   >
-                                    Download
+                                    View
                                   </a>
                                 </div>
                               </div>
@@ -598,7 +598,7 @@ function AssignedRequestPage() {
                     )}
 
                     {/* Rejection Reason */}
-                    {selectedRequest.status.toLowerCase() === "pending" ? (
+                    {selectedRequest.status === "Pending" ? (
                       <div className="border-t pt-4">
                         <Label
                           htmlFor="rejectionReason"
@@ -675,6 +675,7 @@ function AssignedRequestPage() {
                 </Button>
                 <Button
                   variant="destructive"
+                  className="disabled:grayscale-100"
                   onClick={handleReject}
                   disabled={assignAction.isPending || !rejectionReason.trim()}
                 >
@@ -697,6 +698,7 @@ function AssignedRequestPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {console.log(assignedRequests)}
     </div>
   );
 }

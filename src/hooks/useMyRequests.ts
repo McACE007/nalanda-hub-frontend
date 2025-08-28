@@ -15,7 +15,10 @@ export type Request = {
 
   rejectionReason?: string;
   newContentUrl?: string;
-
+  User: {
+    id: number;
+    fullName: string;
+  };
   branchId: number;
   semesterId: number;
   subjectId: number;
