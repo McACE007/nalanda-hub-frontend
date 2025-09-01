@@ -141,27 +141,43 @@ function HomePage() {
           </div>
         </div>
       </div>
-      <div className="container mx-auto">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-6 justify-center mt-4">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 justify-items-center mt-6">
           {data?.pages.map((page) =>
             page.data.map((content) => (
               <ContentCard
-                key={content.title}
+                key={content.id} // Use id instead of title for better uniqueness
                 title={content.title}
-                uploadedBy="Ankit Nayak"
+                uploadedBy={"Unknown"}
+                uploadedDate={new Date(content.uploadedDate)}
                 imageUrl={content.imageUrl}
                 href={`/content/${content.id}`}
               />
             ))
           )}
 
-          <div ref={ref} className="py-6 text-center text-sm text-gray-500">
-            {isFetchingNextPage
-              ? "Loading more..."
-              : hasNextPage
-              ? "Scroll to load more"
-              : "No more contents"}
-          </div>
+          {/* Infinite scroll trigger - moved outside grid */}
+        </div>
+
+        {/* Scroll trigger positioned better */}
+        <div ref={ref} className="py-8 text-center">
+          {isFetchingNextPage ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-sm text-gray-600">
+                Loading more content...
+              </span>
+            </div>
+          ) : hasNextPage ? (
+            <p className="text-sm text-gray-500">Scroll to load more</p>
+          ) : (
+            <div className="py-12">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                <span className="text-2xl">📚</span>
+              </div>
+              <p className="text-gray-500">No content available</p>
+            </div>
+          )}
         </div>
       </div>
     </>

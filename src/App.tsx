@@ -8,6 +8,7 @@ import MyUploadsPage from "./pages/MyUploadsPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MyRequestsPage from "./pages/MyRequestsPage";
 import AssignedRequestPage from "./pages/AssignedRequestsPage";
+import ContentDetailsPage from "./pages/ContentDetailsPage";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,10 @@ function App() {
             <Route
               path="/assigned-requests"
               element={<AssignedRequestPage />}
+            />
+            <Route
+              path="/content/:contentId"
+              element={<ContentDetailsPage />}
             />
           </Route>
           <Route path="/login" element={<LoginPage />} />
