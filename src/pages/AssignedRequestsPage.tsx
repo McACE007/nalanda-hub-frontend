@@ -150,44 +150,60 @@ function AssignedRequestPage() {
     };
   }, [assignedRequests]);
 
-  if (isPending) return <div>Loading....</div>;
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-gray-600 font-medium">Loading assigned requests...</p>
+        </div>
+      </div>
+    );
+  }
 
   const renderTable = (requests: RequestWithRelations[]) => (
-    <div className="bg-card border rounded-lg">
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
-        <Table className="text-nowrap">
+        <Table>
           <TableHeader>
-            <TableRow className="font-bold">
-              <TableHead>S.No</TableHead>
-              <TableHead>Request Title</TableHead>
-              <TableHead>Request Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Requester</TableHead>
-              <TableHead>Subject</TableHead>
+            <TableRow className="bg-gray-50">
+              <TableHead className="font-semibold text-gray-700">S.No</TableHead>
+              <TableHead className="font-semibold text-gray-700">Request Title</TableHead>
+              <TableHead className="font-semibold text-gray-700">Request Type</TableHead>
+              <TableHead className="font-semibold text-gray-700">Status</TableHead>
+              <TableHead className="font-semibold text-gray-700">Requester</TableHead>
+              <TableHead className="font-semibold text-gray-700">Subject</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {requests.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="text-center py-6 text-gray-500"
-                >
-                  No requests found
+                <TableCell colSpan={6} className="text-center py-12">
+                  <div className="flex flex-col items-center space-y-3">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                      <span className="text-2xl">📋</span>
+                    </div>
+                    <p className="text-gray-500 font-medium">No requests found</p>
+                    <p className="text-sm text-gray-400">No {activeTab} requests at the moment</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
               requests.map((request, index) => (
                 <TableRow
                   key={request.id}
-                  className="cursor-pointer hover:bg-gray-50"
+                  className="cursor-pointer hover:bg-gray-50 transition-colors"
                   onClick={() => openRequestDialog(request)}
                 >
-                  <TableCell>{index + 1}</TableCell>
+                  <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>
-                    <p className="font-semibold text-wrap">{request.title}</p>
+                    <p className="font-semibold text-gray-900 line-clamp-2">{request.title}</p>
                   </TableCell>
-                  <TableCell>{request.requestType}</TableCell>
+                  <TableCell>
+                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                      {request.requestType}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -201,25 +217,29 @@ function AssignedRequestPage() {
                       {request.status}
                     </span>
                   </TableCell>
-                  <TableCell>{request.User?.fullName || "Unknown"}</TableCell>
-                  <TableCell>{request.Subject?.name || "N/A"}</TableCell>
+                  <TableCell className="text-gray-700">{request.User?.fullName || "Unknown"}</TableCell>
+                  <TableCell className="text-gray-600">{request.Subject?.name || "N/A"}</TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
-
-        {/* Infinite scroll trigger - only show when there are requests */}
-        {requests.length > 0 && (
-          <div ref={ref} className="py-6 text-center text-sm text-gray-500">
-            {isFetchingNextPage
-              ? "Loading more..."
-              : hasNextPage
-              ? "Scroll to load more"
-              : "No more contents"}
-          </div>
-        )}
       </div>
+      
+      {requests.length > 0 && (
+        <div ref={ref} className="border-t bg-gray-50 py-4 text-center">
+          {isFetchingNextPage ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-sm text-gray-600">Loading more...</span>
+            </div>
+          ) : hasNextPage ? (
+            <p className="text-sm text-gray-500">Scroll to load more</p>
+          ) : (
+            <p className="text-sm text-gray-400">No more requests</p>
+          )}
+        </div>
+      )}
     </div>
   );
 
@@ -243,8 +263,6 @@ function AssignedRequestPage() {
     }
   };
 
-  if (isPending) return <div>Loading....</div>;
-
   const tabs = [
     {
       key: "pending" as TabType,
@@ -267,23 +285,24 @@ function AssignedRequestPage() {
   ];
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Assigned Requests</h1>
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Assigned Requests</h1>
 
       {/* Tab Navigation */}
       <div className="mb-6">
-        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
+        <div className="flex flex-wrap gap-2 sm:gap-1 bg-gray-100 p-1 rounded-lg w-fit">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-md font-medium text-sm transition-all duration-200 border ${getTabColorClasses(
+              className={`px-3 sm:px-4 py-2 rounded-md font-medium text-sm transition-all duration-200 border ${getTabColorClasses(
                 tab.color,
                 activeTab === tab.key
               )}`}
             >
-              {tab.label}
-              <span className="ml-2 px-1.5 py-0.5 bg-black bg-opacity-20 rounded-full text-xs">
+              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="sm:hidden">{tab.label.slice(0, 3)}</span>
+              <span className="ml-1 sm:ml-2 px-1.5 py-0.5 bg-black bg-opacity-20 rounded-full text-xs">
                 {tab.count}
               </span>
             </button>
@@ -296,7 +315,7 @@ function AssignedRequestPage() {
 
       {/* Request Details Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={closeDialog}>
-        <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogContent className="max-w-[95vw] sm:max-w-7xl max-h-[90vh] overflow-hidden flex flex-col mx-4 sm:mx-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">
               Request Details

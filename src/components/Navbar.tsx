@@ -1,7 +1,7 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Brand from "./icons/Brand";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Bell, Search, Upload } from "lucide-react";
+import { Bell, Search, Upload, Menu } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {
@@ -17,7 +17,11 @@ import { useFilters } from "@/stores/useFilterStore";
 import { cn } from "@/lib/utils";
 import { useNotification, type Notification } from "@/hooks/useNotifications";
 
-function Navbar() {
+interface NavbarProps {
+  onMenuClick?: () => void;
+}
+
+function Navbar({ onMenuClick }: NavbarProps) {
   const setFilters = useFilters((state) => state.setFilters);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
@@ -100,48 +104,80 @@ function Navbar() {
   };
 
   return (
-    <nav className="w-full h-14 fixed top-0 left-0 z-50 bg-background border-b border-border/40 py-2 px-4">
-      <div className="h-full flex justify-between items-center w-full">
-        <div className="h-full">
+    <nav className="w-full h-14 fixed top-0 left-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm">
+      <div className="h-full flex justify-between items-center w-full px-4 sm:px-6">
+        {/* Left Section */}
+        <div className="flex items-center gap-2">
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="lg:hidden p-2 rounded-full hover:bg-gray-100"
+            onClick={onMenuClick}
+          >
+            <Menu size={18} />
+          </Button>
+          
+          {/* Logo */}
           <Link
             to={"/"}
-            className="flex justify-center items-center h-full w-fit"
+            className="flex items-center h-full"
           >
-            <Brand height="48" width="48" />
-            <span className="font-semibold flex flex-col gap-0 leading-4 w-fit text-[#203143]">
+            <Brand height="40" width="40" className="sm:h-12 sm:w-12" />
+            <span className="hidden sm:flex font-semibold flex-col gap-0 leading-4 ml-2 text-[#203143]">
               <span>Nalanda</span>
               <span>Hub</span>
             </span>
           </Link>
         </div>
 
-        <div className="flex items-center h-9 w-[600px]">
+        {/* Search Bar - Responsive */}
+        <div className="flex items-center h-8 sm:h-9 flex-1 max-w-xs sm:max-w-md mx-2 sm:mx-6">
           <Input
-            className="bg-background rounded-bl-2xl rounded-tl-2xl h-full flex-1 rounded-r-none focus-visible:border-ring focus-visible:ring-ring/10 focus-visible:ring-1"
-            placeholder="Search"
+            className="bg-white rounded-l-2xl h-full flex-1 rounded-r-none border-r-0 focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-200 text-sm"
+            placeholder="Search..."
             ref={inputRef}
             onKeyDown={(e) => {
               if (e.key === "Enter")
                 setFilters({ searchQuery: inputRef.current?.value || "" });
             }}
           />
-          <Search
-            className="font-extralight bg-gray-100 h-full w-fit px-4 py-2 rounded-r-2xl border border-l-0 hover:bg-gray-200/80 cursor-pointer"
+          <Button
+            size="sm"
+            className="h-8 sm:h-9 px-2 sm:px-3 rounded-l-none rounded-r-2xl bg-gray-100 hover:bg-gray-200 text-gray-600 border border-l-0"
+            variant="ghost"
             onClick={() =>
               setFilters({ searchQuery: inputRef.current?.value || "" })
             }
-          />
+          >
+            <Search size={14} className="sm:w-4 sm:h-4" />
+          </Button>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className={cn("mr-12", searchQuery.get("open") && "hidden")}>
+        {/* Right Section */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* Upload Button */}
+          <div className={cn("hidden sm:block", searchQuery.get("open") && "hidden")}>
             <Button
-              variant={"outline"}
-              className="rounded-2xl"
+              variant="outline"
+              size="sm"
+              className="rounded-full border-gray-300 hover:border-gray-400 hover:bg-gray-50"
               onClick={() => navigate("/my-uploads?open=true")}
             >
-              <Upload />
-              Upload
+              <Upload size={16} className="mr-2" />
+              <span className="hidden lg:inline">Upload</span>
+            </Button>
+          </div>
+          
+          {/* Mobile Upload Button */}
+          <div className={cn("sm:hidden", searchQuery.get("open") && "hidden")}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-2 rounded-full hover:bg-gray-100"
+              onClick={() => navigate("/my-uploads?open=true")}
+            >
+              <Upload size={18} />
             </Button>
           </div>
 
@@ -151,21 +187,25 @@ function Navbar() {
             onOpenChange={setIsNotificationOpen}
           >
             <DropdownMenuTrigger asChild>
-              <div className="relative hover:bg-gray-200 p-1.5 rounded-full cursor-pointer">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="relative p-2 rounded-full hover:bg-gray-100"
+              >
                 <Bell size={18} />
                 {unreadCount > 0 && (
                   <Badge
                     variant="destructive"
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs p-0 min-w-[20px]"
+                    className="absolute -top-1 -right-1 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-xs p-0 min-w-[16px] sm:min-w-[20px]"
                   >
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </Badge>
                 )}
-              </div>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-80 max-h-96 overflow-y-auto p-0"
+              className="w-80 sm:w-96 max-h-96 overflow-y-auto p-0 mx-4 sm:mx-0"
               sideOffset={8}
             >
               {/* Header */}
@@ -291,12 +331,11 @@ function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <div>
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </div>
+          {/* Avatar */}
+          <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback className="text-sm">CN</AvatarFallback>
+          </Avatar>
         </div>
       </div>
     </nav>

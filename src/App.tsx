@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MyRequestsPage from "./pages/MyRequestsPage";
 import AssignedRequestPage from "./pages/AssignedRequestsPage";
 import ContentDetailsPage from "./pages/ContentDetailsPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -18,7 +19,14 @@ function App() {
       <BrowserRouter>
         <Toaster richColors />
         <Routes>
-          <Route path="/" element={<HomeLayout />}>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <HomeLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<HomePage />} />
             <Route path="/my-uploads" element={<MyUploadsPage />} />
             <Route path="/my-requests" element={<MyRequestsPage />} />

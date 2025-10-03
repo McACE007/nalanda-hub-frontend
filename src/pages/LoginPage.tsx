@@ -50,8 +50,8 @@ function LoginPage() {
         ></img>
       </div>
 
-      <div className="flex-1/2 transition-all duration-300">
-        <div className="flex flex-col justify-center space-y-4 px-14 lg:px-36 xl:px-48 max-w-4xl mx-auto h-full transition-all duration-300">
+      <div className="flex-1 lg:flex-1/2 transition-all duration-300">
+        <div className="flex flex-col justify-center space-y-4 px-6 sm:px-14 lg:px-36 xl:px-48 max-w-4xl mx-auto h-full transition-all duration-300">
           <div className="flex items-center">
             <Brand width="60" height="60" />
             <span className="font-semibold flex flex-col gap-0 leading-4 w-fit text-[#203143]">
@@ -102,6 +102,15 @@ function LoginPage() {
               </Button>
             </form>
           </Form>
+          <div className="text-center text-sm text-gray-600">
+            Don't have an account?{" "}
+            <button
+              onClick={() => navigate("/register")}
+              className="text-blue-600 hover:text-blue-800 font-medium underline"
+            >
+              Sign up here
+            </button>
+          </div>
         </div>
       </div>
     </div>

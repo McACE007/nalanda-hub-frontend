@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import { Outlet } from "react-router-dom";
 
 function HomeLayout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex">
@@ -14,13 +14,12 @@ function HomeLayout() {
         isOpen={isSidebarOpen}
         toggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
-      <Navbar />
+      <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
       <main
         className={cn(
-          "mt-14 ",
-          isSidebarOpen
-            ? "ml-64 w-[calc(100%-16rem)]"
-            : "ml-16 w-[calc(100%-4rem)]"
+          "mt-14 flex-1 transition-all duration-300",
+          "lg:ml-16",
+          isSidebarOpen && "lg:ml-64"
         )}
       >
         <Outlet />
