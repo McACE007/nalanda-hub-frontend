@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { toast } from "sonner";
+
 
 type SidebarProps = {
   isOpen: boolean;

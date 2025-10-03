@@ -342,7 +342,7 @@ function Navbar({ onMenuClick }: NavbarProps) {
                 <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
                   <AvatarImage src="https://github.com/shadcn.png" />
                   <AvatarFallback className="text-sm">
-                    {user?.name?.charAt(0)?.toUpperCase() || "U"}
+                    {user?.fullName?.charAt(0)?.toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -350,7 +350,7 @@ function Navbar({ onMenuClick }: NavbarProps) {
             <DropdownMenuContent className="w-56" align="end" sideOffset={8}>
               <div className="flex items-center justify-start gap-2 p-2">
                 <div className="flex flex-col space-y-1 leading-none">
-                  <p className="font-medium">{user?.name || "User"}</p>
+                  <p className="font-medium">{user?.fullName || "User"}</p>
                   <p className="w-[200px] truncate text-sm text-muted-foreground">
                     {user?.email || "user@example.com"}
                   </p>

@@ -7,7 +7,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { Loader2, User, Mail, Calendar, Building } from "lucide-react";
+import { Loader2, User, Mail, Building } from "lucide-react";
 
 interface UserProfileModalProps {
   open: boolean;
@@ -17,13 +17,7 @@ interface UserProfileModalProps {
 export function UserProfileModal({ open, onOpenChange }: UserProfileModalProps) {
   const { data: userProfile, isLoading, error } = useUserProfile();
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
