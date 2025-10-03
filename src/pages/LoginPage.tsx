@@ -42,74 +42,112 @@ function LoginPage() {
   };
 
   return (
-    <div className="h-screen flex bg-background">
-      <div className="hidden lg:block md:flex-1/4 transition-all duration-300 h-full bg-[#35C2F8] mb-2">
+    <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Left Side - Image */}
+      <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 z-10"></div>
         <img
           src={authSideImage}
-          className="h-full w-full object-cover xl:object-cover"
-        ></img>
+          className="h-full w-full object-cover"
+          alt="Authentication"
+        />
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <div className="text-center text-white p-8">
+            <h1 className="text-4xl xl:text-5xl font-bold mb-4">Welcome Back!</h1>
+            <p className="text-lg xl:text-xl opacity-90">Access your learning hub and continue your journey</p>
+          </div>
+        </div>
       </div>
 
-      <div className="flex-1 lg:flex-1/2 transition-all duration-300">
-        <div className="flex flex-col justify-center space-y-4 px-6 sm:px-14 lg:px-36 xl:px-48 max-w-4xl mx-auto h-full transition-all duration-300">
-          <div className="flex items-center">
-            <Brand width="60" height="60" />
-            <span className="font-semibold flex flex-col gap-0 leading-4 w-fit text-[#203143]">
-              <span>Nalanda</span>
-              <span>Hub</span>
-            </span>
+      {/* Right Side - Form */}
+      <div className="w-full lg:w-1/2 xl:w-2/5 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-md space-y-6">
+          {/* Logo and Brand */}
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <Brand width="48" height="48" />
+              <span className="ml-3 font-bold text-2xl text-[#203143]">
+                <span className="block leading-tight">Nalanda</span>
+                <span className="block leading-tight">Hub</span>
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+            <p className="text-gray-600">Sign in to your account to continue</p>
           </div>
-          <div className="text-3xl font-semibold">Login</div>
-          <Form {...form}>
-            <form
-              className="flex flex-col space-y-3"
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter your email"></Input>
-                    </FormControl>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder="Enter your password"
-                      ></Input>
-                    </FormControl>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
+          {/* Form */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+            <Form {...form}>
+              <form
+                className="space-y-5"
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Email Address</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="Enter your email"
+                          className="h-12 px-4 border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <Button type="submit">
-                {form.formState.isSubmitting ? "LOGGING IN..." : "LOGIN"}
-              </Button>
-            </form>
-          </Form>
-          <div className="text-center text-sm text-gray-600">
-            Don't have an account?{" "}
-            <button
-              onClick={() => navigate("/register")}
-              className="text-blue-600 hover:text-blue-800 font-medium underline"
-            >
-              Sign up here
-            </button>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Enter your password"
+                          className="h-12 px-4 border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Signing In...</span>
+                    </div>
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+              </form>
+            </Form>
+
+            {/* Sign up link */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{" "}
+                <button
+                  onClick={() => navigate("/register")}
+                  className="font-semibold text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                >
+                  Create Account
+                </button>
+              </p>
+            </div>
           </div>
         </div>
       </div>

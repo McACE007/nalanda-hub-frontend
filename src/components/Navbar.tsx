@@ -37,9 +37,10 @@ function Navbar({ onMenuClick }: NavbarProps) {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
+
   } = useNotification();
 
-  console.log(notificationData);
+
   const allNotifications =
     notificationData?.pages.flatMap((page) => page.data) || [];
   const unreadCount = allNotifications.length;
@@ -254,7 +255,7 @@ function Navbar({ onMenuClick }: NavbarProps) {
                                   notification.type
                                 )}`}
                               >
-                                {formatTimeAgo("12-12-2012")}
+                                {formatTimeAgo(notification.createdAt)}
                               </p>
                             </div>
                           </div>
@@ -295,7 +296,7 @@ function Navbar({ onMenuClick }: NavbarProps) {
                               {notification.title}
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
-                              {formatTimeAgo("12-12-2012")}
+                              {formatTimeAgo(notification.createdAt)}
                             </p>
                           </div>
                         </div>

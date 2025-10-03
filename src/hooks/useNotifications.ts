@@ -7,6 +7,7 @@ export type Notification = {
   title: string;
   type: "NewContentUpdate" | "RequestForContent" | "Approved" | "Rejected";
   contentUrl: string | null;
+  createdAt: string;
   userId: number;
 };
 

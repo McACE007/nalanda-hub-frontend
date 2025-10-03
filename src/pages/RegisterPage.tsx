@@ -74,137 +74,178 @@ function RegisterPage() {
   };
 
   return (
-    <div className="h-screen flex bg-background">
-      <div className="hidden lg:block md:flex-1/4 transition-all duration-300 h-full bg-[#35C2F8] mb-2">
+    <div className="min-h-screen flex bg-gradient-to-br from-purple-50 to-pink-100">
+      {/* Left Side - Image */}
+      <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 z-10"></div>
         <img
           src={authSideImage}
-          className="h-full w-full object-cover xl:object-cover"
-        ></img>
+          className="h-full w-full object-cover"
+          alt="Authentication"
+        />
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <div className="text-center text-white p-8">
+            <h1 className="text-4xl xl:text-5xl font-bold mb-4">Join Us Today!</h1>
+            <p className="text-lg xl:text-xl opacity-90">Create your account and start your learning journey</p>
+          </div>
+        </div>
       </div>
 
-      <div className="flex-1 lg:flex-1/2 transition-all duration-300">
-        <div className="flex flex-col justify-center space-y-4 px-6 sm:px-14 lg:px-36 xl:px-78 h-full transition-all duration-300">
-          <div className="flex items-center">
-            <Brand width="60" height="60" />
-            <span className="font-semibold flex flex-col gap-0 leading-4 w-fit text-[#203143]">
-              <span>Nalanda</span>
-              <span>Hub</span>
-            </span>
+      {/* Right Side - Form */}
+      <div className="w-full lg:w-1/2 xl:w-2/5 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-md space-y-6">
+          {/* Logo and Brand */}
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <Brand width="48" height="48" />
+              <span className="ml-3 font-bold text-2xl text-[#203143]">
+                <span className="block leading-tight">Nalanda</span>
+                <span className="block leading-tight">Hub</span>
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+            <p className="text-gray-600">Join our learning community today</p>
           </div>
-          <div className="text-3xl font-semibold">Create an account</div>
-          <Form {...form}>
-            <form
-              className="flex flex-col space-y-3"
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
-              <FormField
-                control={form.control}
-                name="fullName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Enter your fullname"
-                      ></Input>
-                    </FormControl>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
 
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Enter your email"></Input>
-                    </FormControl>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder="Enter your password"
-                      ></Input>
-                    </FormControl>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder="Enter your confirm password"
-                      ></Input>
-                    </FormControl>
-                    <FormMessage></FormMessage>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="branchId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Branch</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(Number(value))}
-                      defaultValue={field.value?.toString()}
-                    >
+          {/* Form */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+            <Form {...form}>
+              <form
+                className="space-y-5"
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Full Name</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a branch" />
-                        </SelectTrigger>
+                        <Input
+                          {...field}
+                          placeholder="Enter your full name"
+                          className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                        />
                       </FormControl>
-                      <SelectContent>
-                        {branches?.map((branch) => (
-                          <SelectItem key={branch.id} value={branch.id.toString()}>
-                            {branch.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <Button type="submit">
-                {form.formState.isSubmitting ? "CREATING..." : "CREATE ACCOUNT"}
-              </Button>
-            </form>
-          </Form>
-          <div className="text-center text-sm text-gray-600">
-            Already have an account?{" "}
-            <button
-              onClick={() => navigate("/login")}
-              className="text-blue-600 hover:text-blue-800 font-medium underline"
-            >
-              Sign in here
-            </button>
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Email Address</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="Enter your email"
+                          className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Enter your password"
+                          className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Confirm your password"
+                          className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="branchId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Branch</FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(Number(value))}
+                        defaultValue={field.value?.toString()}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg">
+                            <SelectValue placeholder="Select your branch" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {branches?.map((branch) => (
+                            <SelectItem key={branch.id} value={branch.id.toString()}>
+                              {branch.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Creating Account...</span>
+                    </div>
+                  ) : (
+                    "Create Account"
+                  )}
+                </Button>
+              </form>
+            </Form>
+
+            {/* Sign in link */}
+            {/* Sign in link */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                Already have an account?{" "}
+                <button
+                  onClick={() => navigate("/login")}
+                  className="font-semibold text-purple-600 hover:text-purple-800 transition-colors duration-200"
+                >
+                  Sign In
+                </button>
+              </p>
+            </div>
           </div>
         </div>
       </div>
