@@ -63,7 +63,7 @@ function CreateRequestForm({
   const { data: semesters } = useSemesters();
   const { data: subjects } = useSubjects(semester);
   const { data: units } = useUnits(subject);
-  const { isPending: isLoading } = useMyRequests();
+
 
   async function onSubmit({
     requestType,
@@ -259,8 +259,8 @@ function CreateRequestForm({
                 )}
               />
 
-              <Button disabled={isLoading} className="w-full">
-                {isLoading ? "CREATING REQUEST..." : "CREATE REQUEST"}
+              <Button disabled={createRequest.isPending} className="w-full">
+                {createRequest.isPending ? "CREATING REQUEST..." : "CREATE REQUEST"}
               </Button>
             </form>
           </Form>
