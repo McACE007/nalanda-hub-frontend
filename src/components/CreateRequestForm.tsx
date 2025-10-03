@@ -34,7 +34,7 @@ import {
   type CreateRequestInput,
 } from "@/schemas/requestSchema";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useCreateRequest, useMyRequests } from "@/hooks/useMyRequests";
+import { useCreateRequest } from "@/hooks/useMyRequests";
 
 function CreateRequestForm({
   open,
