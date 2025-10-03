@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useDeleteContent, useMyContents } from "@/hooks/useMyContents";
-import { CircuitBoard, Pencil, Trash } from "lucide-react";
+import { CircuitBoard, Pencil, Trash, CheckCircle, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
@@ -128,7 +128,11 @@ function MyUploadsPage() {
                       {format(content.updatedAt, "dd MMM yyyy")}
                     </TableCell>
                     <TableCell>
-                      <CircuitBoard className="text-red-500 ml-2"></CircuitBoard>
+                      {content.status ? (
+                        <CheckCircle className="text-green-500 ml-2" />
+                      ) : (
+                        <XCircle className="text-red-500 ml-2" />
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-2">
