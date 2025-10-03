@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   GitPullRequestCreateArrow,
   Home,
-  LogOut,
   Menu,
   Upload,
   X,
@@ -33,11 +32,6 @@ const menuItems = [
     icon: GitPullRequestCreateArrow,
     href: "/my-requests",
   },
-  {
-    name: "Logout",
-    icon: LogOut,
-    href: "",
-  },
 ];
 
 const modMenuItems = [
@@ -49,15 +43,8 @@ const modMenuItems = [
 ];
 
 function Sidebar({ isOpen, toggle }: SidebarProps) {
-  const logout = useAuthStore.getState().logout;
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
-
-  async function handleLogout() {
-    await logout();
-    navigate("/login");
-    toast.success("Logged out sucessfully!");
-  }
 
   return (
     <>
@@ -110,17 +97,13 @@ function Sidebar({ isOpen, toggle }: SidebarProps) {
         {menuItems.map((item) => (
           <div
             key={item.name}
-            onClick={
-              item.name == "Logout" 
-                ? handleLogout 
-                : () => {
-                    navigate(item.href);
-                    // Close sidebar on mobile after navigation
-                    if (window.innerWidth < 1024) {
-                      toggle();
-                    }
-                  }
-            }
+            onClick={() => {
+              navigate(item.href);
+              // Close sidebar on mobile after navigation
+              if (window.innerWidth < 1024) {
+                toggle();
+              }
+            }}
             className={cn(
               "flex items-center px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
             )}
@@ -155,17 +138,13 @@ function Sidebar({ isOpen, toggle }: SidebarProps) {
             {modMenuItems.map((item) => (
               <div
                 key={item.name}
-                onClick={
-                  item.name == "Logout"
-                    ? handleLogout
-                    : () => {
-                        navigate(item.href);
-                        // Close sidebar on mobile after navigation
-                        if (window.innerWidth < 1024) {
-                          toggle();
-                        }
-                      }
-                }
+                onClick={() => {
+                  navigate(item.href);
+                  // Close sidebar on mobile after navigation
+                  if (window.innerWidth < 1024) {
+                    toggle();
+                  }
+                }}
                 className={cn(
                   "flex items-center px-6 py-2 text-sm hover:bg-accent hover:text-accent-foreground cursor-pointer"
                 )}

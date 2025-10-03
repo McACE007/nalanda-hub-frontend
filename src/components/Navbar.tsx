@@ -1,7 +1,7 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Brand from "./icons/Brand";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Bell, Search, Upload, Menu } from "lucide-react";
+import { Bell, Search, Upload, Menu, User, LogOut } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import {
@@ -16,6 +16,8 @@ import { useRef, useState } from "react";
 import { useFilters } from "@/stores/useFilterStore";
 import { cn } from "@/lib/utils";
 import { useNotification, type Notification } from "@/hooks/useNotifications";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { UserProfileModal } from "./UserProfileModal";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -27,6 +29,8 @@ function Navbar({ onMenuClick }: NavbarProps) {
   const navigate = useNavigate();
   const [searchQuery] = useSearchParams();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const { user, logout } = useAuthStore();
 
   const {
     data: notificationData,
@@ -331,13 +335,46 @@ function Navbar({ onMenuClick }: NavbarProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Avatar */}
-          <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback className="text-sm">CN</AvatarFallback>
-          </Avatar>
+          {/* User Profile Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-full">
+                <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback className="text-sm">
+                    {user?.name?.charAt(0)?.toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" sideOffset={8}>
+              <div className="flex items-center justify-start gap-2 p-2">
+                <div className="flex flex-col space-y-1 leading-none">
+                  <p className="font-medium">{user?.name || "User"}</p>
+                  <p className="w-[200px] truncate text-sm text-muted-foreground">
+                    {user?.email || "user@example.com"}
+                  </p>
+                </div>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setIsProfileModalOpen(true)}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => logout()}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
+      
+      <UserProfileModal 
+        open={isProfileModalOpen} 
+        onOpenChange={setIsProfileModalOpen} 
+      />
     </nav>
   );
 }

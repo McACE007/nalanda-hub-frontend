@@ -29,7 +29,7 @@ export const useContentStore = create<ContentStore>((set) => ({
       set({
         isLoading: false,
         error: isAxiosError(error)
-          ? error.response?.data.error
+          ? error.response?.data?.message || error.response?.data?.error || error.message
           : "Failed to create content",
       });
       return false;
@@ -50,7 +50,7 @@ export const useContentStore = create<ContentStore>((set) => ({
       set({
         isLoading: false,
         error: isAxiosError(error)
-          ? error.response?.data.error
+          ? error.response?.data?.message || error.response?.data?.error || error.message
           : "Failed to delete content",
       });
       return false;
