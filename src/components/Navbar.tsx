@@ -123,7 +123,7 @@ function Navbar({ onMenuClick }: NavbarProps) {
             to={"/"}
             className="flex items-center h-full"
           >
-            <Brand height="40" width="40" className="sm:h-12 sm:w-12" />
+            <Brand height="40" width="40" />
             <span className="hidden sm:flex font-semibold flex-col gap-0 leading-4 ml-2 text-[#203143]">
               <span>Nalanda</span>
               <span>Hub</span>
