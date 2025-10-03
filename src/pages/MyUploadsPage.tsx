@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useDeleteContent, useMyContents } from "@/hooks/useMyContents";
-import { CircuitBoard, Pencil, Trash, CheckCircle, XCircle } from "lucide-react";
+import { Pencil, Trash, CheckCircle, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
