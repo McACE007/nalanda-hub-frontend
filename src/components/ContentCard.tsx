@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { PDFThumbnail } from "./PDFThumbnail";
 
 type ContentCardProps = {
   title: string;
@@ -6,6 +7,8 @@ type ContentCardProps = {
   uploadedDate?: Date;
   imageUrl: string;
   href: string;
+  fileUrl?: string;
+  fileType?: string;
 };
 
 function ContentCard({
@@ -14,19 +17,32 @@ function ContentCard({
   uploadedDate = new Date(),
   imageUrl,
   href,
+  fileUrl,
+  fileType,
 }: ContentCardProps) {
+  const isPDF = fileType === 'pdf' || fileUrl?.toLowerCase().endsWith('.pdf');
+  const shouldUsePDFThumbnail = isPDF && fileUrl && (!imageUrl || imageUrl.trim() === '');
   return (
     <div className="w-full max-w-sm mx-auto">
       <div className="rounded-2xl overflow-hidden bg-white border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300 group h-full flex flex-col">
         <Link to={href} className="block h-full flex flex-col">
           {/* Image Container with fixed aspect ratio */}
           <div className="relative aspect-video overflow-hidden bg-gray-100 flex-shrink-0">
-            <img
-              src={imageUrl}
-              alt={title}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              loading="lazy"
-            />
+            {shouldUsePDFThumbnail ? (
+              <PDFThumbnail
+                url={fileUrl}
+                width={300}
+                height={200}
+                className="transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <img
+                src={imageUrl}
+                alt={title}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+              />
+            )}
             {/* Gradient overlay for better text readability if needed */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>

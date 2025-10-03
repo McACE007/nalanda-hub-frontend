@@ -28,6 +28,13 @@ export type Content = {
   Unit: {
     name: string;
   };
+  File?: {
+    id: number;
+    name: string;
+    url: string;
+    size: number;
+    type: 'pdf' | 'txt' | 'docs';
+  };
 };
 
 type ApiResponse = {

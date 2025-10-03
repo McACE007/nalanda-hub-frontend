@@ -156,12 +156,14 @@ function HomePage() {
           {data?.pages.map((page) =>
             page.data.map((content) => (
               <ContentCard
-                key={content.id} // Use id instead of title for better uniqueness
+                key={content.id}
                 title={content.title}
                 uploadedBy={"Unknown"}
                 uploadedDate={new Date(content.uploadedDate)}
                 imageUrl={content.imageUrl}
                 href={`/content/${content.id}`}
+                fileUrl={content.File?.url}
+                fileType={content.File?.type}
               />
             ))
           )}

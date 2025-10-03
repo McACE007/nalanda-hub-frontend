@@ -21,6 +21,13 @@ export type Content = {
   subjectId: number;
   unitId: number;
   fileId: number;
+  File?: {
+    id: number;
+    name: string;
+    url: string;
+    size: number;
+    type: 'pdf' | 'txt' | 'docs';
+  };
 };
 
 type ApiResponse = {

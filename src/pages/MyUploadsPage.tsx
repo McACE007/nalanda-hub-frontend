@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { PDFThumbnail } from "@/components/PDFThumbnail";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -98,11 +99,20 @@ function MyUploadsPage() {
                     <TableCell>{sno++}</TableCell>
                     <TableCell>
                       <div className="flex gap-4 lg:items-center">
-                        <img
-                          src={content.imageUrl}
-                          alt="PDF Thumbnail"
-                          className="h-20 w-20 min-h-20 min-w-20"
-                        />
+                        {content.File?.type === 'pdf' && content.File?.url && (!content.imageUrl || content.imageUrl.trim() === '') ? (
+                          <PDFThumbnail
+                            url={content.File.url}
+                            width={80}
+                            height={80}
+                            className="min-h-20 min-w-20 rounded"
+                          />
+                        ) : (
+                          <img
+                            src={content.imageUrl}
+                            alt="Content Thumbnail"
+                            className="h-20 w-20 min-h-20 min-w-20 object-cover rounded"
+                          />
+                        )}
                         <div className="flex flex-col justify-center">
                           <div className="font-bold">{content.Unit.name}</div>
                           <div className="text-muted-foreground text-xs">
