@@ -1,12 +1,15 @@
 import Sidebar from "@/components/Sidebar";
-
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import { Outlet } from "react-router-dom";
+import { ModalProvider } from "@/contexts/ModalContext";
+import { UserProfileModal } from "@/components/UserProfileModal";
+import { useModal } from "@/contexts/ModalContext";
 
-function HomeLayout() {
+function HomeLayoutContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isProfileModalOpen, setIsProfileModalOpen } = useModal();
 
   return (
     <div className="min-h-screen flex">
@@ -24,7 +27,19 @@ function HomeLayout() {
       >
         <Outlet />
       </main>
+      <UserProfileModal 
+        open={isProfileModalOpen} 
+        onOpenChange={setIsProfileModalOpen} 
+      />
     </div>
+  );
+}
+
+function HomeLayout() {
+  return (
+    <ModalProvider>
+      <HomeLayoutContent />
+    </ModalProvider>
   );
 }
 

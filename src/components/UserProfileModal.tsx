@@ -1,13 +1,8 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { Loader2, User, Mail, Building } from "lucide-react";
+import { Loader2, User, Mail, Building, X } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface UserProfileModalProps {
   open: boolean;
@@ -17,14 +12,23 @@ interface UserProfileModalProps {
 export function UserProfileModal({ open, onOpenChange }: UserProfileModalProps) {
   const { data: userProfile, isLoading, error } = useUserProfile();
 
-
+  if (!open) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>User Profile</DialogTitle>
-        </DialogHeader>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/50" onClick={() => onOpenChange(false)} />
+      <div className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-4 z-10">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">User Profile</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onOpenChange(false)}
+            className="h-6 w-6 p-0"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
         
         {isLoading && (
           <div className="flex items-center justify-center py-8">
@@ -92,7 +96,7 @@ export function UserProfileModal({ open, onOpenChange }: UserProfileModalProps) 
             </div>
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }

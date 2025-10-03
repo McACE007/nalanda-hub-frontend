@@ -17,7 +17,7 @@ import { useFilters } from "@/stores/useFilterStore";
 import { cn } from "@/lib/utils";
 import { useNotification, type Notification } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { UserProfileModal } from "./UserProfileModal";
+import { useModal } from "@/contexts/ModalContext";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -29,8 +29,8 @@ function Navbar({ onMenuClick }: NavbarProps) {
   const navigate = useNavigate();
   const [searchQuery] = useSearchParams();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  const { setIsProfileModalOpen } = useModal();
 
   const {
     data: notificationData,
@@ -357,7 +357,9 @@ function Navbar({ onMenuClick }: NavbarProps) {
                 </div>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setIsProfileModalOpen(true)}>
+              <DropdownMenuItem 
+                onClick={() => setIsProfileModalOpen(true)}
+              >
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
@@ -371,10 +373,6 @@ function Navbar({ onMenuClick }: NavbarProps) {
         </div>
       </div>
       
-      <UserProfileModal 
-        open={isProfileModalOpen} 
-        onOpenChange={setIsProfileModalOpen} 
-      />
     </nav>
   );
 }
