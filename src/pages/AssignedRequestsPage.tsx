@@ -15,7 +15,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useInView } from "react-intersection-observer";
@@ -24,80 +23,48 @@ import { toast } from "sonner";
 import {
   useAssignedRequests,
   useAssignAction,
+  type Request,
 } from "@/hooks/useAssignedRequests";
 
 type TabType = "pending" | "approved" | "rejected";
 
-interface RequestDetails {
-  id: number;
-  title: string;
-  description?: string;
-  rejectionReason?: string;
-  newContentUrl?: string;
-  requestType: string;
-  status: "Approved" | "Rejected" | "Pending";
-  User: {
-    id: number;
+type RequestWithRelations = Request & {
+  User?: {
     fullName: string;
     email: string;
   };
-  requesterId: number;
-  Moderator: {
-    id: number;
-    fullName: string;
-    email: string;
+  Subject?: {
+    name: string;
   };
-  moderatorId: number;
-  contentId?: number;
+  Branch?: {
+    name: string;
+  };
+  Semester?: {
+    name: string;
+  };
+  Unit?: {
+    name: string;
+  };
   Content?: {
-    id: number;
     title: string;
     description: string;
-    imageUrl: string;
-    status: boolean;
     uploadedDate: string;
-    updatedAt: string;
-    uploadedBy: number;
-    uploader: {
-      id: number;
+    uploader?: {
       fullName: string;
-      email: string;
     };
     File?: {
-      id: number;
-      name: string;
-      url: string;
-      size: number;
       type: string;
+      name: string;
+      size: number;
+      url: string;
     };
   };
-  Branch: {
-    id: number;
-    name: string;
-  };
-  branchId: number;
-  Semester: {
-    id: number;
-    name: string;
-  };
-  semesterId: number;
-  Subject: {
-    id: number;
-    name: string;
-  };
-  subjectId: number;
-  Unit: {
-    id: number;
-    name: string;
-  };
-  unitId: number;
-}
+};
 
 function AssignedRequestPage() {
   const [activeTab, setActiveTab] = useState<TabType>("pending");
-  const [selectedRequest, setSelectedRequest] = useState<RequestDetails | null>(
-    null
-  );
+  const [selectedRequest, setSelectedRequest] =
+    useState<RequestWithRelations | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showPdfViewer, setShowPdfViewer] = useState(false);
@@ -136,7 +103,7 @@ function AssignedRequestPage() {
     );
   };
 
-  const openRequestDialog = (request: RequestDetails) => {
+  const openRequestDialog = (request: RequestWithRelations) => {
     setSelectedRequest(request);
     setRejectionReason(request.rejectionReason || "");
     setIsDialogOpen(true);
@@ -163,24 +130,6 @@ function AssignedRequestPage() {
     handleAction(selectedRequest.id, "approve");
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   // Group requests by status
   const groupedRequests = useMemo(() => {
     if (!assignedRequests?.pages)
@@ -203,7 +152,7 @@ function AssignedRequestPage() {
 
   if (isPending) return <div>Loading....</div>;
 
-  const renderTable = (requests: any[]) => (
+  const renderTable = (requests: RequestWithRelations[]) => (
     <div className="bg-card border rounded-lg">
       <div className="overflow-x-auto">
         <Table className="text-nowrap">
@@ -438,148 +387,6 @@ function AssignedRequestPage() {
                       </div>
                     </div>
 
-                    {/* Academic Information */}
-                    <div className="border-t pt-4">
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">
-                        Academic Details
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-medium text-gray-700">
-                            Branch
-                          </Label>
-                          <p className="mt-1 text-sm text-gray-900">
-                            {selectedRequest.Branch?.name}
-                          </p>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-gray-700">
-                            Semester
-                          </Label>
-                          <p className="mt-1 text-sm text-gray-900">
-                            {selectedRequest.Semester?.name}
-                          </p>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-gray-700">
-                            Subject
-                          </Label>
-                          <p className="mt-1 text-sm text-gray-900">
-                            {selectedRequest.Subject?.name}
-                          </p>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-gray-700">
-                            Unit
-                          </Label>
-                          <p className="mt-1 text-sm text-gray-900">
-                            {selectedRequest.Unit?.name}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Content Information */}
-                    {selectedRequest.Content && (
-                      <div className="border-t pt-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className="text-lg font-medium text-gray-900">
-                            Content Information
-                          </h3>
-                          {selectedRequest.Content.File &&
-                            selectedRequest.Content.File.type === "PDF" && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setShowPdfViewer(!showPdfViewer)}
-                              >
-                                {showPdfViewer ? "Hide PDF" : "View PDF"}
-                              </Button>
-                            )}
-                        </div>
-
-                        <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-                          <div>
-                            <Label className="text-sm font-medium text-gray-700">
-                              Content Title
-                            </Label>
-                            <p className="mt-1 text-sm text-gray-900">
-                              {selectedRequest.Content.title}
-                            </p>
-                          </div>
-
-                          {selectedRequest.Content.description && (
-                            <div>
-                              <Label className="text-sm font-medium text-gray-700">
-                                Content Description
-                              </Label>
-                              <p className="mt-1 text-sm text-gray-900">
-                                {selectedRequest.Content.description}
-                              </p>
-                            </div>
-                          )}
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <Label className="text-sm font-medium text-gray-700">
-                                Uploaded By
-                              </Label>
-                              <p className="mt-1 text-sm text-gray-900">
-                                {selectedRequest.Content.uploader?.fullName}
-                              </p>
-                            </div>
-                            <div>
-                              <Label className="text-sm font-medium text-gray-700">
-                                Upload Date
-                              </Label>
-                              <p className="mt-1 text-sm text-gray-900">
-                                {formatDate(
-                                  selectedRequest.Content.uploadedDate
-                                )}
-                              </p>
-                            </div>
-                          </div>
-
-                          {selectedRequest.Content.File && (
-                            <div className="border-t pt-3 mt-3">
-                              <Label className="text-sm font-medium text-gray-700">
-                                Attached File
-                              </Label>
-                              <div className="mt-2 p-3 bg-white rounded border">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center space-x-3">
-                                    <div className="w-8 h-8 bg-red-100 rounded flex items-center justify-center">
-                                      <span className="text-xs font-medium text-red-600">
-                                        {selectedRequest.Content.File.type}
-                                      </span>
-                                    </div>
-                                    <div>
-                                      <p className="text-sm font-medium text-gray-900">
-                                        {selectedRequest.Content.File.name}
-                                      </p>
-                                      <p className="text-xs text-gray-500">
-                                        {formatFileSize(
-                                          selectedRequest.Content.File.size
-                                        )}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <a
-                                    href={selectedRequest.Content.File.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                                  >
-                                    View
-                                  </a>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
                     {/* New Content URL */}
                     {selectedRequest.newContentUrl && (
                       <div className="border-t pt-4">
@@ -598,7 +405,7 @@ function AssignedRequestPage() {
                     )}
 
                     {/* Rejection Reason */}
-                    {selectedRequest.status === "Pending" ? (
+                    {selectedRequest.status === "PENDING" ? (
                       <div className="border-t pt-4">
                         <Label
                           htmlFor="rejectionReason"
@@ -698,7 +505,6 @@ function AssignedRequestPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {console.log(assignedRequests)}
     </div>
   );
 }

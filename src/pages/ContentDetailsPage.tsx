@@ -5,14 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Calendar,
-  BookOpen,
-  GraduationCap,
-  Building,
-  FileText,
-  ArrowLeft,
-} from "lucide-react";
+import { Calendar, FileText, ArrowLeft } from "lucide-react";
 
 function ContentDetailsPage() {
   const params = useParams();

@@ -8,9 +8,8 @@ import {
 } from "@/components/ui/table";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import CreateRequestForm from "@/components/CreateRequestForm";
-import { useDeleteRequest, useMyRequests } from "@/hooks/useMyRequests";
+import { useMyRequests } from "@/hooks/useMyRequests";
 
 function MyRequestsPage() {
   const {
@@ -21,23 +20,11 @@ function MyRequestsPage() {
     fetchNextPage,
   } = useMyRequests();
   const { ref, inView } = useInView();
-  const deleteRequest = useDeleteRequest();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (inView) fetchNextPage();
   }, [inView, fetchNextPage]);
-
-  const handleDeleteRequest = async (requestId: number) => {
-    deleteRequest.mutate(requestId, {
-      onSuccess: () => {
-        toast.success("Request deleted successfully!");
-      },
-      onError: () => {
-        toast.error("Failed to delete request");
-      },
-    });
-  };
 
   if (isPending) return <div>Loading....</div>;
 

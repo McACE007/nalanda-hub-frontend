@@ -21,7 +21,7 @@ function Navbar() {
   const setFilters = useFilters((state) => state.setFilters);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useSearchParams();
+  const [searchQuery] = useSearchParams();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   const {

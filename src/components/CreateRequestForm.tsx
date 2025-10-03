@@ -1,4 +1,4 @@
-import { File, Plus, Upload } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Dialog,
