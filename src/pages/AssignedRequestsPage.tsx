@@ -68,6 +68,7 @@ function AssignedRequestPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [showPdfViewer, setShowPdfViewer] = useState(false);
+  const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);
   const {
     data: assignedRequests,
     isPending,
@@ -87,6 +88,7 @@ function AssignedRequestPage() {
     action: "approve" | "reject",
     rejectionReason = ""
   ) => {
+    setActionType(action);
     assignAction.mutate(
       { id: requestId, action, rejectionReason },
       {
@@ -95,9 +97,11 @@ function AssignedRequestPage() {
           setIsDialogOpen(false);
           setSelectedRequest(null);
           setRejectionReason("");
+          setActionType(null);
         },
         onError: () => {
           toast.error(`Failed to ${action} request`);
+          setActionType(null);
         },
       }
     );
@@ -114,6 +118,7 @@ function AssignedRequestPage() {
     setSelectedRequest(null);
     setRejectionReason("");
     setShowPdfViewer(false);
+    setActionType(null);
   };
 
   const handleReject = () => {
@@ -424,21 +429,21 @@ function AssignedRequestPage() {
                     )}
 
                     {/* Rejection Reason */}
-                    {selectedRequest.status === "PENDING" ? (
-                      <div className="border-t pt-4">
+                    {selectedRequest.status.toLowerCase() === "pending" ? (
+                      <div className="border-t pt-4 bg-yellow-50 p-4 rounded-lg">
                         <Label
                           htmlFor="rejectionReason"
-                          className="text-sm font-medium text-gray-700"
+                          className="text-sm font-semibold text-red-700 mb-2 block"
                         >
-                          Rejection Reason (required for rejection)
+                          Rejection Reason (Required to reject this request)
                         </Label>
                         <Textarea
                           id="rejectionReason"
                           value={rejectionReason}
                           onChange={(e) => setRejectionReason(e.target.value)}
-                          placeholder="Enter reason for rejection..."
-                          className="mt-1"
-                          rows={3}
+                          placeholder="Please provide a detailed reason for rejecting this request..."
+                          className="mt-2 border-red-200 focus:border-red-500 focus:ring-red-500"
+                          rows={4}
                         />
                       </div>
                     ) : (
@@ -505,14 +510,14 @@ function AssignedRequestPage() {
                   onClick={handleReject}
                   disabled={assignAction.isPending || !rejectionReason.trim()}
                 >
-                  {assignAction.isPending ? "Processing..." : "Reject"}
+                  {assignAction.isPending && actionType === 'reject' ? "Rejecting..." : "Reject"}
                 </Button>
                 <Button
                   onClick={handleApprove}
                   disabled={assignAction.isPending}
                   className="bg-green-600 hover:bg-green-700"
                 >
-                  {assignAction.isPending ? "Processing..." : "Approve"}
+                  {assignAction.isPending && actionType === 'approve' ? "Approving..." : "Approve"}
                 </Button>
               </div>
             )}

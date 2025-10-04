@@ -154,18 +154,21 @@ function HomePage() {
       <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
           {data?.pages.map((page) =>
-            page.data.map((content) => (
-              <ContentCard
-                key={content.id}
-                title={content.title}
-                uploadedBy={"Unknown"}
-                uploadedDate={new Date(content.uploadedDate)}
-                imageUrl={content.imageUrl}
-                href={`/content/${content.id}`}
-                fileUrl={content.File?.url}
-                fileType={content.File?.type}
-              />
-            ))
+            page.data.map((content) => {
+
+              return (
+                <ContentCard
+                  key={content.id}
+                  title={content.title}
+                  uploadedBy={content.uploader?.fullName || "Unknown"}
+                  uploadedDate={new Date(content.uploadedDate)}
+                  imageUrl={content.imageUrl}
+                  href={`/content/${content.id}`}
+                  fileUrl={content.File?.url}
+                  fileType={content.File?.type}
+                />
+              );
+            })
           )}
 
           {/* Infinite scroll trigger - moved outside grid */}

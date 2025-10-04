@@ -74,13 +74,13 @@ function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-purple-50 to-pink-100">
+    <div className="h-screen flex bg-gradient-to-br from-purple-50 to-pink-100">
       {/* Left Side - Image */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-2/5 xl:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 z-10"></div>
         <img
           src={authSideImage}
-          className="h-full w-full object-cover"
+          className="h-[calc(100%+6rem)] w-full object-cover object-top -translate-y-24"
           alt="Authentication"
         />
         <div className="absolute inset-0 z-20 flex items-center justify-center">
@@ -92,8 +92,8 @@ function RegisterPage() {
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 xl:w-2/5 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div className="w-full max-w-md space-y-6">
+      <div className="w-full lg:w-3/5 xl:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-8 overflow-y-auto">
+        <div className="w-full max-w-md space-y-2 my-2">
           {/* Logo and Brand */}
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
@@ -103,15 +103,15 @@ function RegisterPage() {
                 <span className="block leading-tight">Hub</span>
               </span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Create Account</h2>
             <p className="text-gray-600">Join our learning community today</p>
           </div>
 
           {/* Form */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+          <div className="bg-white rounded-2xl shadow-xl p-3 sm:p-4">
             <Form {...form}>
               <form
-                className="space-y-5"
+                className="space-y-2"
                 onSubmit={form.handleSubmit(onSubmit)}
               >
                 <FormField
@@ -124,7 +124,7 @@ function RegisterPage() {
                         <Input
                           {...field}
                           placeholder="Enter your full name"
-                          className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                          className="h-10 px-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
                         />
                       </FormControl>
                       <FormMessage />
@@ -142,7 +142,7 @@ function RegisterPage() {
                         <Input 
                           {...field} 
                           placeholder="Enter your email"
-                          className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                          className="h-10 px-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
                         />
                       </FormControl>
                       <FormMessage />
@@ -161,7 +161,7 @@ function RegisterPage() {
                           {...field}
                           type="password"
                           placeholder="Enter your password"
-                          className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                          className="h-10 px-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
                         />
                       </FormControl>
                       <FormMessage />
@@ -180,7 +180,7 @@ function RegisterPage() {
                           {...field}
                           type="password"
                           placeholder="Confirm your password"
-                          className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                          className="h-10 px-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
                         />
                       </FormControl>
                       <FormMessage />
@@ -199,7 +199,7 @@ function RegisterPage() {
                         defaultValue={field.value?.toString()}
                       >
                         <FormControl>
-                          <SelectTrigger className="h-12 px-4 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg">
+                          <SelectTrigger className="h-10 px-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg">
                             <SelectValue placeholder="Select your branch" />
                           </SelectTrigger>
                         </FormControl>
@@ -218,7 +218,7 @@ function RegisterPage() {
 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
+                  className="w-full h-10 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
                   disabled={form.formState.isSubmitting}
                 >
                   {form.formState.isSubmitting ? (
@@ -235,7 +235,7 @@ function RegisterPage() {
 
             {/* Sign in link */}
             {/* Sign in link */}
-            <div className="mt-6 text-center">
+            <div className="mt-4 text-center">
               <p className="text-sm text-gray-600">
                 Already have an account?{" "}
                 <button

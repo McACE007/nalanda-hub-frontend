@@ -42,13 +42,13 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="h-screen flex bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Left Side - Image */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-2/5 xl:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 z-10"></div>
         <img
           src={authSideImage}
-          className="h-full w-full object-cover"
+          className="h-[calc(100%+6rem)] w-full object-cover object-top -translate-y-24"
           alt="Authentication"
         />
         <div className="absolute inset-0 z-20 flex items-center justify-center">
@@ -60,8 +60,8 @@ function LoginPage() {
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 xl:w-2/5 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div className="w-full max-w-md space-y-6">
+      <div className="w-full lg:w-3/5 xl:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-md space-y-4">
           {/* Logo and Brand */}
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
@@ -71,15 +71,15 @@ function LoginPage() {
                 <span className="block leading-tight">Hub</span>
               </span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">Welcome Back</h2>
             <p className="text-gray-600">Sign in to your account to continue</p>
           </div>
 
           {/* Form */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+          <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6">
             <Form {...form}>
               <form
-                className="space-y-5"
+                className="space-y-4"
                 onSubmit={form.handleSubmit(onSubmit)}
               >
                 <FormField

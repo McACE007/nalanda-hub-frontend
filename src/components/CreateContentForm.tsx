@@ -36,6 +36,8 @@ import { useContentStore } from "@/stores/useContentStore";
 import { toast } from "sonner";
 import { useCreateContent } from "@/hooks/useMyContents";
 import type { Dispatch, SetStateAction } from "react";
+import { generatePDFThumbnail, generateDocThumbnail } from "@/utils/thumbnailGenerator";
+import { useState } from "react";
 
 function CreateContentForm({
   open,
@@ -54,6 +56,8 @@ function CreateContentForm({
   });
   const { isLoading, error } = useContentStore();
   const createContent = useCreateContent();
+  const [thumbnails, setThumbnails] = useState<{ [key: string]: Blob }>({});
+  const [generatingThumbnails, setGeneratingThumbnails] = useState(false);
 
   const [files, semester, subject] = useWatch({
     control: form.control,
@@ -75,7 +79,17 @@ function CreateContentForm({
     formData.set("semesterId", semester);
     formData.set("subjectId", subject);
     formData.set("unitId", unit);
-    Array.from(files as FileList).map((file) => formData.append("files", file));
+    
+    const fileArray = Array.from(files as FileList);
+    fileArray.forEach((file) => formData.append("files", file));
+    
+    // Add thumbnails to formData - one thumbnail per file
+    fileArray.forEach((file) => {
+      const thumbnail = thumbnails[file.name];
+      if (thumbnail) {
+        formData.append("thumbnails", thumbnail, `${file.name}_thumbnail.jpg`);
+      }
+    });
 
     createContent.mutate(formData, {
       onSuccess: () => {
@@ -121,12 +135,41 @@ function CreateContentForm({
                           type="file"
                           accept=".pdf, .docx, .doc"
                           className="sr-only"
-                          onChange={(e) =>
-                            form.setValue("files", e.target.files, {
+                          onChange={async (e) => {
+                            const files = e.target.files;
+                            form.setValue("files", files, {
                               shouldValidate: true,
                               shouldDirty: true,
-                            })
-                          }
+                            });
+                            
+                            // Generate thumbnails
+                            if (files) {
+                              setGeneratingThumbnails(true);
+                              const newThumbnails: { [key: string]: Blob } = {};
+                              for (const file of Array.from(files)) {
+                                try {
+                                  let thumbnail: Blob;
+                                  if (file.type === 'application/pdf') {
+                                    thumbnail = await generatePDFThumbnail(file);
+                                  } else {
+                                    thumbnail = await generateDocThumbnail(file);
+                                  }
+                                  newThumbnails[file.name] = thumbnail;
+                                } catch (error) {
+                                  console.error('Failed to generate thumbnail for', file.name, error);
+                                  // Generate fallback thumbnail
+                                  try {
+                                    const fallbackThumbnail = await generateDocThumbnail(file);
+                                    newThumbnails[file.name] = fallbackThumbnail;
+                                  } catch (fallbackError) {
+                                    console.error('Fallback thumbnail generation also failed:', fallbackError);
+                                  }
+                                }
+                              }
+                              setThumbnails(newThumbnails);
+                              setGeneratingThumbnails(false);
+                            }
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -135,18 +178,25 @@ function CreateContentForm({
                 />
 
                 {files && (files as FileList).length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-3 justify-center">
-                    {Array.from(files as FileList).map((file, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md shadow-sm"
-                      >
-                        <File className="w-4 h-4 text-gray-600" />
-                        <span className="text-sm truncate max-w-[150px]">
-                          {file.name}
-                        </span>
+                  <div className="mt-4 space-y-2">
+                    <div className="flex flex-wrap gap-3 justify-center">
+                      {Array.from(files as FileList).map((file, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-md shadow-sm"
+                        >
+                          <File className="w-4 h-4 text-gray-600" />
+                          <span className="text-sm truncate max-w-[150px]">
+                            {file.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    {generatingThumbnails && (
+                      <div className="text-center text-sm text-blue-600">
+                        Generating thumbnails...
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { pdfjs } from 'react-pdf';
+import * as pdfjsLib from 'pdfjs-dist';
 import { Loader2, FileText } from 'lucide-react';
 
 // Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
 
 interface PDFThumbnailProps {
   url: string;
@@ -28,7 +28,7 @@ export function PDFThumbnail({
         setLoading(true);
         setError(false);
 
-        const pdf = await pdfjs.getDocument(url).promise;
+        const pdf = await pdfjsLib.getDocument(url).promise;
         const page = await pdf.getPage(1);
         
         const viewport = page.getViewport({ scale: 1 });
@@ -48,6 +48,7 @@ export function PDFThumbnail({
         await page.render({
           canvasContext: context,
           viewport: scaledViewport,
+          canvas: canvas
         }).promise;
 
         const thumbnailUrl = canvas.toDataURL('image/png');

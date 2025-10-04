@@ -117,7 +117,7 @@ function Navbar({ onMenuClick }: NavbarProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="xl:hidden p-2 rounded-full hover:bg-gray-100"
+            className="p-2 rounded-full hover:bg-gray-100"
             onClick={onMenuClick}
           >
             <Menu size={18} />

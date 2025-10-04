@@ -28,6 +28,11 @@ export type Content = {
     size: number;
     type: 'pdf' | 'txt' | 'docs';
   };
+  uploader?: {
+    id: number;
+    fullName: string;
+    email: string;
+  };
 };
 
 type ApiResponse = {
